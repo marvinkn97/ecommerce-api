@@ -13,10 +13,12 @@ import java.time.LocalDateTime;
 @Data
 public class Product {
     @Id
-    private Integer productId;
+    private Integer id;
+    private String productId;
     private String productName;
     private BigDecimal productPrice;
     private String productDescription;
+    private byte[] imageBytes;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
