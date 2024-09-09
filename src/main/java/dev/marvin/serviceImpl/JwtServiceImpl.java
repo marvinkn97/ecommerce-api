@@ -7,8 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.keygen.BytesKeyGenerator;
-import org.springframework.security.crypto.keygen.KeyGenerators;
+import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
@@ -16,12 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+@Service
 @Slf4j
 public class JwtServiceImpl implements JwtService {
     private final Key key;
     public JwtServiceImpl() {
-        BytesKeyGenerator bytesKeyGenerator = KeyGenerators.shared(16);
-        this.key = Keys.hmacShaKeyFor(bytesKeyGenerator.generateKey());
+        Key key = Jwts.SIG.HS256.key().build();
+        this.key = Keys.hmacShaKeyFor(key.getEncoded());
     }
 
     @Override
