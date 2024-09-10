@@ -1,4 +1,4 @@
 package dev.marvin.dto;
 
-public record CategoryRequest(String name) {
+public record CategoryRequest(String categoryName) {
 }

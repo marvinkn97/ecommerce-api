@@ -1,4 +1,4 @@
 package dev.marvin.dto;
 
-public record UserRegistrationRequest(String name, String email, String password) {
+public record UserRegistrationRequest(String name, String email, String password, String mobileNumber) {
 }
