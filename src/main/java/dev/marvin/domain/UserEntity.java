@@ -20,12 +20,9 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(columnDefinition = "VARCHAR", length = 50)
     private String fullName;
-    @Column(unique = true, columnDefinition = "VARCHAR", length = 50)
     private String email;
     private String password;
-    @Column(unique = true, columnDefinition = "VARCHAR", length = 12)
     private String mobileNumber;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")

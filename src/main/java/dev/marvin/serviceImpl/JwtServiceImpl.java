@@ -1,5 +1,7 @@
 package dev.marvin.serviceImpl;
 
+import dev.marvin.domain.SecurityConstants;
+import dev.marvin.domain.UserPrincipal;
 import dev.marvin.service.JwtService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -9,7 +11,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,10 +20,11 @@ import java.util.Map;
 @Service
 @Slf4j
 public class JwtServiceImpl implements JwtService {
-    private final Key key;
+    private final SecretKey secretKey;
+
     public JwtServiceImpl() {
-        Key key = Jwts.SIG.HS256.key().build();
-        this.key = Keys.hmacShaKeyFor(key.getEncoded());
+        SecretKey secretKey = Jwts.SIG.HS256.key().build();
+        this.secretKey = Keys.hmacShaKeyFor(secretKey.getEncoded());
     }
 
     @Override
@@ -31,20 +34,26 @@ public class JwtServiceImpl implements JwtService {
             if (!authentication.isAuthenticated()) {
                 throw new BadCredentialsException(HttpStatus.UNAUTHORIZED.getReasonPhrase());
             }
-            Date date = new Date();
+
+            Date date = SecurityConstants.ISSUED_AT;
             log.info("iat: {}", date);
 
-            Date expirationDate = new Date(date.getTime() + 1000 * 60);
+            Date expirationDate = SecurityConstants.EXPIRES_AT;
             log.info("exp: {}", expirationDate);
 
             Map<String, Object> claimsMap = new HashMap<>();
+
+            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+
+            claimsMap.put("emailId", principal.getUsername());
+            claimsMap.put("roleName", principal.userEntity().getRoleEntity().getRoleName());
 
             return Jwts.builder()
                     .issuedAt(date)
                     .subject(authentication.getName())
                     .expiration(expirationDate)
                     .claims(claimsMap)
-                    .signWith(key)
+                    .signWith(secretKey)
                     .compact();
 
         } catch (Exception e) {
@@ -56,6 +65,11 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Boolean validateToken(String token) {
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> extractClaimsFromToken(String token) {
         return null;
     }
 }
