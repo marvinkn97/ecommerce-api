@@ -10,14 +10,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 public class JwtValidationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
@@ -35,6 +34,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
             response.getWriter().println(error);
             return;
         }
+        //if(authHeader.startsWith("Bearer"))
 
     }
 }

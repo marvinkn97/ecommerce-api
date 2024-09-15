@@ -42,12 +42,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Collection<CategoryResponse> getAll() {
         log.info("Inside getAll method of CategoryServiceImpl");
-        try{
-         return categoryRepository.findAll().stream()
-                    .map(category -> new CategoryResponse(category.getCategoryId(), category.getCategoryName()))
+        try {
+            return categoryRepository.findAll().stream()
+                    .map(category -> new CategoryResponse(category.getCategoryId(), category.getCategoryName(), category.getCreatedAt()))
                     .collect(Collectors.toSet());
-        }catch (Exception e){
-            log.error("Unexpected error occurred in add method of CategoryServiceImpl: {}", e.getMessage(),e);
+        } catch (Exception e) {
+            log.error("Unexpected error occurred in add method of CategoryServiceImpl: {}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
 
