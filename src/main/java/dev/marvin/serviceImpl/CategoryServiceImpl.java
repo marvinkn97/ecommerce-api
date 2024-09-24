@@ -1,19 +1,22 @@
 package dev.marvin.serviceImpl;
 
+import dev.marvin.constants.PaginationConstant;
 import dev.marvin.domain.Category;
 import dev.marvin.dto.CategoryRequest;
 import dev.marvin.dto.CategoryResponse;
 import dev.marvin.exception.DuplicateResourceException;
+import dev.marvin.exception.ServiceException;
+import dev.marvin.mapper.CategoryMapper;
 import dev.marvin.repository.CategoryRepository;
 import dev.marvin.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,22 +39,24 @@ public class CategoryServiceImpl implements CategoryService {
             throw new DuplicateResourceException("Category with given name already exists");
         } catch (Exception e) {
             log.error("Unexpected error occurred in add method of CategoryServiceImpl: {}", e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw new ServiceException("An error occurred while processing the request", e);
         }
 
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<CategoryResponse> getAll() {
+    public Page<CategoryResponse> getAll() {
         log.info("Inside getAll method of CategoryServiceImpl");
         try {
-            return categoryRepository.findAll().stream()
-                    .map(category -> new CategoryResponse(category.getCategoryId(), category.getCategoryName(), category.getCreatedAt()))
-                    .collect(Collectors.toSet());
+            Pageable pageable = PageRequest.of(PaginationConstant.pageNumber, PaginationConstant.pageSize, Sort.by(Sort.Direction.DESC, PaginationConstant.sortColumn));
+            Page<Category> categoryPage = categoryRepository.getCategories(pageable);
+            List<CategoryResponse> categoryResponseList = categoryPage.getContent().stream().map(CategoryMapper::mapToDto)
+                    .toList();
+            return new PageImpl<>(categoryResponseList, pageable, categoryPage.getTotalElements());
         } catch (Exception e) {
             log.error("Unexpected error occurred in getAll method of CategoryServiceImpl: {}", e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw new ServiceException("An error occurred while processing the request", e);
         }
 
     }

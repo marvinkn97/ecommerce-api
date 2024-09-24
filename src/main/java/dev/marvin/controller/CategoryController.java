@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-
 @RestController
 @RequestMapping("api/v1/categories")
 @Slf4j
@@ -18,14 +16,14 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<?> add(@RequestBody CategoryRequest[] categoryRequest) {
+    public ResponseEntity<Object> add(@RequestBody CategoryRequest categoryRequest) {
         log.info("Inside add method of CategoryController");
-        Arrays.stream(categoryRequest).forEach(categoryService::add);
+        categoryService.add(categoryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("Category created successfully");
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<Object> getAll() {
         log.info("Inside getAll method of CategoryController");
         return ResponseEntity.ok(categoryService.getAll());
     }

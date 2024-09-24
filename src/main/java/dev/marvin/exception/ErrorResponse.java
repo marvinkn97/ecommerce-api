@@ -1,13 +1,13 @@
 package dev.marvin.exception;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
 
-@Data
-public class ErrorResponse {
-    private Integer statusCode;
-    private String status;
-    private String message;
-    private LocalDateTime timestamp;
+public record ErrorResponse(
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        LocalDateTime timestamp,
+        Integer statusCode,
+        String status,
+        String message) {
 }
