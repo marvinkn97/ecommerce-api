@@ -1,25 +1,20 @@
 package dev.marvin.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Table(name = "tbl_categories")
-@Data
-public class Category {
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+public class Category extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(unique = true)
     private String categoryName;
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-    private Integer createdBy;
-    private Integer updatedBy;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }
