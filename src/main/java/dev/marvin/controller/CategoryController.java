@@ -34,32 +34,37 @@ public class CategoryController {
     }
 
     @GetMapping("/public/categories")
-    //retrieve a list of category - swagger def
+    @Operation(summary = "fetch all", description = "retrieve a list of categories", method = "GET")
     public ResponseEntity<Page<CategoryResponse>> getAll() {
         log.info("Inside getAll method of CategoryController");
         return ResponseEntity.ok(categoryService.getAll());
     }
 
     @GetMapping("/public/categories/{categoryId}")
+    @Operation(summary = "fetch one", description = "retrieve a specified category", method = "GET")
     //retrieve existing category - swagger def
-    public ResponseEntity<Object> getOne(@PathVariable("categoryId") Integer categoryId) {
+    public ResponseEntity<CategoryResponse> getOne(@PathVariable("categoryId") Integer categoryId) {
         log.info("Inside getOne method of CategoryController");
-        return ResponseEntity.ok( categoryService.getOne(categoryId));
+        return ResponseEntity.ok(categoryService.getOne(categoryId));
     }
 
 
     @PutMapping("/admin/categories/{categoryId}")
     //@PreAuthorize("hasRole('ADMIN')")
     //update an existing category - swagger def
-    public void update(@PathVariable("categoryId") Integer categoryId, @RequestBody CategoryRequest categoryRequest) {
+    public ResponseEntity<String> update(@PathVariable("categoryId") Integer categoryId, @RequestBody CategoryRequest categoryRequest) {
         log.info("Inside update method of CategoryController");
+        categoryService.update(categoryId, categoryRequest);
+        return ResponseEntity.ok("Category updated successfully");
     }
 
     @DeleteMapping("/admin/categories/{categoryId}")
     //@PreAuthorize("hasRole('ADMIN')")
     //delete an existing category - swagger def
-    public void delete(@PathVariable("categoryId") Integer categoryId) {
+    public ResponseEntity<String> delete(@PathVariable("categoryId") Integer categoryId) {
         log.info("Inside delete method of CategoryController");
+        categoryService.delete(categoryId);
+        return ResponseEntity.ok("Category deleted successfully");
     }
 
 }

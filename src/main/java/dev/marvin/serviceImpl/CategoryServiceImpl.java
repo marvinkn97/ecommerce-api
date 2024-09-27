@@ -18,6 +18,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -59,7 +60,6 @@ public class CategoryServiceImpl implements CategoryService {
             log.error("Unexpected error occurred in getAll method of CategoryServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
-
     }
 
     @Override
@@ -72,12 +72,42 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void update(Integer categoryId, CategoryRequest categoryRequest) {
+        log.info("Inside update method of CategoryServiceImpl");
+        try {
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
+            if (StringUtils.hasText(categoryRequest.categoryName())) {
+                category.setCategoryName(categoryRequest.categoryName());
+            }
+            categoryRepository.save(category);
+        } catch (ResourceNotFoundException e) {
+            log.error("Category not found exception: {}", e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error occurred in update method of CategoryServiceImpl: {}", e.getMessage(), e);
+            throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
+        }
 
     }
 
     @Override
+    @Transactional
     public void delete(Integer categoryId) {
+        log.info("Inside delete method of CategoryServiceImpl");
+        try {
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
+            category.setStatus(Status.Inactive);
+            categoryRepository.save(category);
+        } catch (ResourceNotFoundException e) {
+            log.error("Category not found: {}", e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error occurred in update method of CategoryServiceImpl: {}", e.getMessage(), e);
+            throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
+        }
 
     }
 
