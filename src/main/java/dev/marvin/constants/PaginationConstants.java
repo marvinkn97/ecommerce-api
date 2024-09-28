@@ -1,7 +1,8 @@
 package dev.marvin.constants;
 
 public class PaginationConstants {
-    public static final Integer pageNumber = 0;
-    public static final Integer pageSize = 10;
-    public static final String sortColumn = "createdAt";
+    private PaginationConstants(){}
+    public static final Integer PAGE_NUMBER = 0;
+    public static final Integer PAGE_SIZE = 10;
+    public static final String SORT_COLUMN = "createdAt";
 }

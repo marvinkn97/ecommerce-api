@@ -9,5 +9,5 @@ public record ErrorResponse(
         LocalDateTime timestamp,
         Integer statusCode,
         String status,
-        String message) {
+        Object message) {
 }

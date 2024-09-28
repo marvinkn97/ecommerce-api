@@ -51,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Page<CategoryResponse> getAll() {
         log.info("Inside getAll method of CategoryServiceImpl");
         try {
-            Pageable pageable = PageRequest.of(PaginationConstants.pageNumber, PaginationConstants.pageSize, Sort.by(Sort.Direction.DESC, PaginationConstants.sortColumn));
+            Pageable pageable = PageRequest.of(PaginationConstants.PAGE_NUMBER, PaginationConstants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, PaginationConstants.SORT_COLUMN));
             Page<Category> categoryPage = categoryRepository.getCategories(pageable);
             List<CategoryResponse> categoryResponseList = categoryPage.getContent().stream().map(CategoryMapper::mapToDto)
                     .toList();
@@ -66,9 +66,18 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public CategoryResponse getOne(Integer categoryId) {
         log.info("Inside getOne method of CategoryServiceImpl");
-        return categoryRepository.findById(categoryId)
-                .map(CategoryMapper::mapToDto)
-                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
+        try {
+            return categoryRepository.findById(categoryId)
+                    .map(CategoryMapper::mapToDto)
+                    .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
+        } catch (ResourceNotFoundException e) {
+            log.error("Category not found exception: {}", e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error occurred in getOne method of CategoryServiceImpl: {}", e.getMessage(), e);
+            throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
+        }
+
     }
 
     @Override
@@ -105,7 +114,7 @@ public class CategoryServiceImpl implements CategoryService {
             log.error("Category not found: {}", e.getMessage(), e);
             throw e;
         } catch (Exception e) {
-            log.error("Unexpected error occurred in update method of CategoryServiceImpl: {}", e.getMessage(), e);
+            log.error("Unexpected error occurred in delete method of CategoryServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
 

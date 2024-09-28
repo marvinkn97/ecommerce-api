@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,7 +28,7 @@ public class CategoryController {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Category added successfully"),
             @ApiResponse(responseCode = "500", description = "Failed to add Category")})
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Object> add(@RequestBody CategoryRequest categoryRequest) {
+    public ResponseEntity<Object> add(@Valid @RequestBody CategoryRequest categoryRequest) {
         log.info("Inside add method of CategoryController");
         categoryService.add(categoryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("Category added successfully");
@@ -42,7 +43,6 @@ public class CategoryController {
 
     @GetMapping("/public/categories/{categoryId}")
     @Operation(summary = "fetch one", description = "retrieve a specified category", method = "GET")
-    //retrieve existing category - swagger def
     public ResponseEntity<CategoryResponse> getOne(@PathVariable("categoryId") Integer categoryId) {
         log.info("Inside getOne method of CategoryController");
         return ResponseEntity.ok(categoryService.getOne(categoryId));
@@ -51,8 +51,10 @@ public class CategoryController {
 
     @PutMapping("/admin/categories/{categoryId}")
     //@PreAuthorize("hasRole('ADMIN')")
-    //update an existing category - swagger def
-    public ResponseEntity<String> update(@PathVariable("categoryId") Integer categoryId, @RequestBody CategoryRequest categoryRequest) {
+    @Operation(summary = "update", description = "update an existing category", method = "PUT")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Category updated successfully"),
+            @ApiResponse(responseCode = "500", description = "Failed to update Category")})
+    public ResponseEntity<String> update(@PathVariable("categoryId") Integer categoryId, @Valid @RequestBody CategoryRequest categoryRequest) {
         log.info("Inside update method of CategoryController");
         categoryService.update(categoryId, categoryRequest);
         return ResponseEntity.ok("Category updated successfully");
@@ -60,7 +62,9 @@ public class CategoryController {
 
     @DeleteMapping("/admin/categories/{categoryId}")
     //@PreAuthorize("hasRole('ADMIN')")
-    //delete an existing category - swagger def
+    @Operation(summary = "delete", description = "delete an existing category", method = "DELETE")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Category deleted successfully"),
+            @ApiResponse(responseCode = "500", description = "Failed to delete Category")})
     public ResponseEntity<String> delete(@PathVariable("categoryId") Integer categoryId) {
         log.info("Inside delete method of CategoryController");
         categoryService.delete(categoryId);
