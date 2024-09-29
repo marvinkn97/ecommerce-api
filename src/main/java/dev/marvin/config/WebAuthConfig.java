@@ -27,6 +27,7 @@ public class WebAuthConfig {
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> {
+                    request.requestMatchers("*/public/**").permitAll();
                     request.anyRequest().permitAll();
                 })
                 .build();

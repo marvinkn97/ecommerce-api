@@ -19,5 +19,7 @@ public class MessageConstants {
     /*
      * Product
      * */
+    public static final String PRODUCT_NOT_FOUND = "Product not found";
+    public static final String DUPLICATE_PRODUCT_NAME = "Product with given name already exists";
 
 }

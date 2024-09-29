@@ -39,7 +39,9 @@ public class CategoryServiceImpl implements CategoryService {
             categoryRepository.save(category);
         } catch (DataIntegrityViolationException ex) {
             log.error("DataIntegrityViolationException {}", ex.getMessage(), ex);
-            throw new DuplicateResourceException(MessageConstants.DUPLICATE_CATEGORY_NAME);
+            if (ex.getMessage().contains("category_name")) {
+                throw new DuplicateResourceException(MessageConstants.DUPLICATE_CATEGORY_NAME);
+            }
         } catch (Exception e) {
             log.error("Unexpected error occurred in add method of CategoryServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
@@ -85,8 +87,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void update(Integer categoryId, CategoryRequest categoryRequest) {
         log.info("Inside update method of CategoryServiceImpl");
         try {
-            Category category = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
+            Category category = getCategoryById(categoryId);
             if (StringUtils.hasText(categoryRequest.categoryName())) {
                 category.setCategoryName(categoryRequest.categoryName());
             }
@@ -106,8 +107,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void delete(Integer categoryId) {
         log.info("Inside delete method of CategoryServiceImpl");
         try {
-            Category category = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
+            Category category = getCategoryById(categoryId);
             category.setStatus(Status.Inactive);
             categoryRepository.save(category);
         } catch (ResourceNotFoundException e) {
@@ -118,6 +118,11 @@ public class CategoryServiceImpl implements CategoryService {
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
 
+    }
+
+    private Category getCategoryById(Integer categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
     }
 
 
