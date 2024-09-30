@@ -23,9 +23,15 @@ public class Product extends BaseEntity {
     @Column(unique = true)
     private String productName;
     private BigDecimal productPrice;
+    private BigDecimal discountPrice;
+    private BigDecimal specialPrice;
     private String productDescription;
+    private Integer productQuantity;
     private byte[] imageBytes;
+    private Integer sellerId;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+
 }

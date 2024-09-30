@@ -28,6 +28,7 @@ public class WebAuthConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> {
                     request.requestMatchers("*/public/**").permitAll();
+                    //request.requestMatchers("*/admin/**").hasRole("ADMIN").anyRequest().authenticated();
                     request.anyRequest().permitAll();
                 })
                 .build();

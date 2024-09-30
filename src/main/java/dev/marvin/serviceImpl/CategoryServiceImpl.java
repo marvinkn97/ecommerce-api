@@ -9,7 +9,7 @@ import dev.marvin.dto.CategoryResponse;
 import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.exception.ResourceNotFoundException;
 import dev.marvin.exception.ServiceException;
-import dev.marvin.mapper.CategoryMapper;
+import dev.marvin.mapper.Mapper;
 import dev.marvin.repository.CategoryRepository;
 import dev.marvin.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             Pageable pageable = PageRequest.of(PaginationConstants.PAGE_NUMBER, PaginationConstants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, PaginationConstants.SORT_COLUMN));
             Page<Category> categoryPage = categoryRepository.getCategories(pageable);
-            List<CategoryResponse> categoryResponseList = categoryPage.getContent().stream().map(CategoryMapper::mapToDto)
+            List<CategoryResponse> categoryResponseList = categoryPage.getContent().stream().map(Mapper::mapToDto)
                     .toList();
             return new PageImpl<>(categoryResponseList, pageable, categoryPage.getTotalElements());
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("Inside getOne method of CategoryServiceImpl");
         try {
             return categoryRepository.findById(categoryId)
-                    .map(CategoryMapper::mapToDto)
+                    .map(Mapper::mapToDto)
                     .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
         } catch (ResourceNotFoundException e) {
             log.error("Category not found exception: {}", e.getMessage(), e);
