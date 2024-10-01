@@ -19,6 +19,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +40,13 @@ public class ProductServiceImpl implements ProductService {
                 product.setProductId(UUID.randomUUID().toString());
                 product.setProductName(productRequest.productName());
                 product.setProductPrice(product.getProductPrice());
+                product.setDiscountPrice(productRequest.discountPrice());
+
+                BigDecimal discountDecimal = product.getDiscountPrice().multiply(new BigDecimal("0.01"));
+                BigDecimal discountAmount = discountDecimal.multiply(product.getProductPrice());
+                BigDecimal specialPrice = product.getProductPrice().subtract(discountAmount);
+                product.setSpecialPrice(specialPrice);
+
                 product.setProductDescription(product.getProductDescription());
 
                 //TODO: find a way to store this product image in cloud storage
