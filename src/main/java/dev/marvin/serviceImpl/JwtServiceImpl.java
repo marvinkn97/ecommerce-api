@@ -5,18 +5,16 @@ import dev.marvin.domain.SecurityConstants;
 import dev.marvin.domain.UserPrincipal;
 import dev.marvin.exception.ServiceException;
 import dev.marvin.service.JwtService;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.keygen.BytesKeyGenerator;
-import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,8 +26,7 @@ public class JwtServiceImpl implements JwtService {
     private final SecretKey secretKey;
 
     public JwtServiceImpl() {
-        BytesKeyGenerator bytesKeyGenerator = KeyGenerators.shared(12);
-        this.secretKey = Keys.hmacShaKeyFor(bytesKeyGenerator.generateKey());
+        this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
     @Override
@@ -62,7 +59,7 @@ public class JwtServiceImpl implements JwtService {
                     .compact();
 
         } catch (Exception e) {
-            log.error("Unexpected Error Occurred in generateToken method of JwtServiceImpl: {}", e.getMessage(), e);
+            log.error("Unexpected error occurred in generateToken method of JwtServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
 
@@ -75,14 +72,21 @@ public class JwtServiceImpl implements JwtService {
             Jwts.parserBuilder().setSigningKey(this.secretKey).build().parseClaimsJws(token);
             return true;
         } catch (JwtException e) {
-            log.error("Unexpected Error Occurred in validateToken method of JwtServiceImpl: {}", e.getMessage(), e);
+            log.error("Unexpected error occurred in validateToken method of JwtServiceImpl: {}", e.getMessage(), e);
             return false;
         }
-
     }
 
     @Override
     public Map<String, Object> extractClaimsFromToken(String token) {
-        return Map.of();
+        log.info("Inside extractClaimsFromToken method of JwtServiceImpl");
+        try {
+            Claims claims = Jwts.parserBuilder().build().parseClaimsJws(token).getBody();
+            return new HashMap<>(claims);
+        } catch (JwtException e) {
+            log.error("Unexpected error occurred in extractClaimsFromToken method of JwtServiceImpl: {}", e.getMessage(), e);
+            return Collections.emptyMap();
+        }
+
     }
 }

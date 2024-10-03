@@ -86,6 +86,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Page<ProductResponse> getAll(Integer categoryId) {
+        log.info("Inside getAll method of ProductServiceImpl");
+        return null;
+    }
+
+    @Override
     public ProductResponse getOne(Integer productId) {
         return null;
     }

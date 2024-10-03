@@ -9,6 +9,8 @@ public interface ProductService {
 
     Page<ProductResponse> getAll();
 
+    Page<ProductResponse> getAll(Integer categoryId);
+
     ProductResponse getOne(Integer productId);
 
     ProductResponse getOne(String productName);
