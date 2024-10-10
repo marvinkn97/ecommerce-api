@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -50,8 +51,21 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CategoryResponse> getAll() {
+    public Collection<CategoryResponse> getAll() {
         log.info("Inside getAll method of CategoryServiceImpl");
+        try {
+            return categoryRepository.findAll().stream().map(Mapper::mapToDto)
+                    .toList();
+        } catch (Exception e) {
+            log.error("Unexpected error occurred in getAllPaginated method of CategoryServiceImpl: {}", e.getMessage(), e);
+            throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CategoryResponse> getAllPaginated() {
+        log.info("Inside getAllPaginated method of CategoryServiceImpl");
         try {
             Pageable pageable = PageRequest.of(PaginationConstants.PAGE_NUMBER, PaginationConstants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, PaginationConstants.SORT_COLUMN));
             Page<Category> categoryPage = categoryRepository.getCategories(pageable);
@@ -59,7 +73,7 @@ public class CategoryServiceImpl implements CategoryService {
                     .toList();
             return new PageImpl<>(categoryResponseList, pageable, categoryPage.getTotalElements());
         } catch (Exception e) {
-            log.error("Unexpected error occurred in getAll method of CategoryServiceImpl: {}", e.getMessage(), e);
+            log.error("Unexpected error occurred in getAllPaginated method of CategoryServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
     }
@@ -104,17 +118,19 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void delete(Integer categoryId) {
-        log.info("Inside delete method of CategoryServiceImpl");
+    public void toggleStatus(Integer categoryId) {
+        log.info("Inside toggleStatus method of CategoryServiceImpl");
         try {
             Category category = getCategoryById(categoryId);
-            category.setStatus(Status.Inactive);
+            Status currentStatus = category.getStatus();
+            Status updatedStatus = currentStatus.equals(Status.Active) ? Status.Inactive : Status.Active;
+            category.setStatus(updatedStatus);
             categoryRepository.save(category);
         } catch (ResourceNotFoundException e) {
             log.error("Category not found: {}", e.getMessage(), e);
             throw e;
         } catch (Exception e) {
-            log.error("Unexpected error occurred in delete method of CategoryServiceImpl: {}", e.getMessage(), e);
+            log.error("Unexpected error occurred in toggleStatus method of CategoryServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
 

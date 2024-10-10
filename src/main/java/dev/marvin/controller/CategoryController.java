@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+
 @RestController
 @RequestMapping("api/v1/categories")
 @Slf4j
@@ -36,9 +38,16 @@ public class CategoryController {
 
     @GetMapping
     @Operation(summary = "fetch all", description = "retrieve a list of categories", method = "GET")
-    public ResponseEntity<Page<CategoryResponse>> getAll() {
+    public ResponseEntity<Collection<CategoryResponse>> getAll() {
         log.info("Inside getAll method of CategoryController");
         return ResponseEntity.ok(categoryService.getAll());
+    }
+
+    @GetMapping("/paginated")
+    @Operation(summary = "fetch all paginated", description = "retrieve a paginated list of categories", method = "GET")
+    public ResponseEntity<Page<CategoryResponse>> getAllPaginated() {
+        log.info("Inside getAllPaginated method of CategoryController");
+        return ResponseEntity.ok(categoryService.getAllPaginated());
     }
 
     @GetMapping("/{categoryId}")
@@ -60,15 +69,15 @@ public class CategoryController {
         return ResponseEntity.ok("Category updated successfully");
     }
 
-    @DeleteMapping("/{categoryId}")
+    @PutMapping("{categoryId}/toggle-status")
     //@PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "delete", description = "delete an existing category", method = "DELETE")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Category deleted successfully"),
-            @ApiResponse(responseCode = "500", description = "Failed to delete Category")})
-    public ResponseEntity<String> delete(@PathVariable("categoryId") Integer categoryId) {
+    @Operation(summary = "toggle status", description = "activate/deactivate existing category", method = "PUT")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Category status updated successfully"),
+            @ApiResponse(responseCode = "500", description = "Failed to update Category status")})
+    public ResponseEntity<String> toggleStatus(@PathVariable("categoryId") Integer categoryId) {
         log.info("Inside delete method of CategoryController");
-        categoryService.delete(categoryId);
-        return ResponseEntity.ok("Category deleted successfully");
+        categoryService.toggleStatus(categoryId);
+        return ResponseEntity.ok("Category status updated successfully");
     }
 
 }
