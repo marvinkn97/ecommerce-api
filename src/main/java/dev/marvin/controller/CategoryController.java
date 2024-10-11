@@ -2,6 +2,7 @@ package dev.marvin.controller;
 
 import dev.marvin.dto.CategoryRequest;
 import dev.marvin.dto.CategoryResponse;
+import dev.marvin.dto.ResponseDto;
 import dev.marvin.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/categories")
@@ -30,10 +32,9 @@ public class CategoryController {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Category added successfully"),
             @ApiResponse(responseCode = "500", description = "Failed to add Category")})
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Object> add(@Valid @RequestBody CategoryRequest categoryRequest) {
+    public ResponseEntity<ResponseDto<String>> add(@Valid @RequestBody CategoryRequest categoryRequest) {
         log.info("Inside add method of CategoryController");
-        categoryService.add(categoryRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Category added successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.add(categoryRequest));
     }
 
     @GetMapping
@@ -63,10 +64,9 @@ public class CategoryController {
     @Operation(summary = "update", description = "update an existing category", method = "PUT")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Category updated successfully"),
             @ApiResponse(responseCode = "500", description = "Failed to update Category")})
-    public ResponseEntity<String> update(@PathVariable("categoryId") Integer categoryId, @Valid @RequestBody CategoryRequest categoryRequest) {
+    public ResponseEntity<Map<String, Object>> update(@PathVariable("categoryId") Integer categoryId, @Valid @RequestBody CategoryRequest categoryRequest) {
         log.info("Inside update method of CategoryController");
-        categoryService.update(categoryId, categoryRequest);
-        return ResponseEntity.ok("Category updated successfully");
+        return ResponseEntity.ok(categoryService.update(categoryId, categoryRequest));
     }
 
     @PutMapping("{categoryId}/toggle-status")
@@ -74,10 +74,9 @@ public class CategoryController {
     @Operation(summary = "toggle status", description = "activate/deactivate existing category", method = "PUT")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Category status updated successfully"),
             @ApiResponse(responseCode = "500", description = "Failed to update Category status")})
-    public ResponseEntity<String> toggleStatus(@PathVariable("categoryId") Integer categoryId) {
+    public ResponseEntity<Map<String, Object>> toggleStatus(@PathVariable("categoryId") Integer categoryId) {
         log.info("Inside delete method of CategoryController");
-        categoryService.toggleStatus(categoryId);
-        return ResponseEntity.ok("Category status updated successfully");
+        return ResponseEntity.ok(categoryService.toggleStatus(categoryId));
     }
 
 }

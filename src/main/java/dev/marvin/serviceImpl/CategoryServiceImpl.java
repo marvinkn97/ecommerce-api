@@ -6,6 +6,7 @@ import dev.marvin.domain.Category;
 import dev.marvin.domain.Status;
 import dev.marvin.dto.CategoryRequest;
 import dev.marvin.dto.CategoryResponse;
+import dev.marvin.dto.ResponseDto;
 import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.exception.ResourceNotFoundException;
 import dev.marvin.exception.ServiceException;
@@ -16,12 +17,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -31,17 +34,20 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void add(CategoryRequest categoryRequest) {
+    public ResponseDto<String> add(CategoryRequest categoryRequest) {
         log.info("Inside add method of CategoryServiceImpl");
         try {
             Category category = new Category();
             category.setCategoryName(categoryRequest.categoryName());
             category.setStatus(Status.Active);
-            categoryRepository.save(category);
+            Category savedCategory = categoryRepository.save(category);
+            return new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), "Category added successfully with Id %s".formatted(savedCategory.getId()));
         } catch (DataIntegrityViolationException ex) {
             log.error("DataIntegrityViolationException {}", ex.getMessage(), ex);
             if (ex.getMessage().contains("category_name")) {
                 throw new DuplicateResourceException(MessageConstants.DUPLICATE_CATEGORY_NAME);
+            } else {
+                throw new DuplicateResourceException(ex.getMessage());
             }
         } catch (Exception e) {
             log.error("Unexpected error occurred in add method of CategoryServiceImpl: {}", e.getMessage(), e);
@@ -98,7 +104,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void update(Integer categoryId, CategoryRequest categoryRequest) {
+    public Map<String, Object> update(Integer categoryId, CategoryRequest categoryRequest) {
         log.info("Inside update method of CategoryServiceImpl");
         try {
             Category category = getCategoryById(categoryId);
@@ -106,6 +112,8 @@ public class CategoryServiceImpl implements CategoryService {
                 category.setCategoryName(categoryRequest.categoryName());
             }
             categoryRepository.save(category);
+            return Map.of("status", HttpStatus.OK.getReasonPhrase(), "message", "Category with Id %s updated successfully".formatted(category.getId()));
+
         } catch (ResourceNotFoundException e) {
             log.error("Category not found exception: {}", e.getMessage(), e);
             throw e;
@@ -113,12 +121,11 @@ public class CategoryServiceImpl implements CategoryService {
             log.error("Unexpected error occurred in update method of CategoryServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
-
     }
 
     @Override
     @Transactional
-    public void toggleStatus(Integer categoryId) {
+    public Map<String, Object> toggleStatus(Integer categoryId) {
         log.info("Inside toggleStatus method of CategoryServiceImpl");
         try {
             Category category = getCategoryById(categoryId);
@@ -126,6 +133,8 @@ public class CategoryServiceImpl implements CategoryService {
             Status updatedStatus = currentStatus.equals(Status.Active) ? Status.Inactive : Status.Active;
             category.setStatus(updatedStatus);
             categoryRepository.save(category);
+            return Map.of("status", HttpStatus.OK.getReasonPhrase(), "message", "Category status with Id %s updated successfully".formatted(category.getId()));
+
         } catch (ResourceNotFoundException e) {
             log.error("Category not found: {}", e.getMessage(), e);
             throw e;

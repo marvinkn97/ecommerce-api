@@ -24,6 +24,7 @@ public class Product extends BaseEntity {
     private String productName;
     private BigDecimal productPrice;
     private BigDecimal discountPrice;
+    @Transient
     private BigDecimal specialPrice;
     private String productDescription;
     private Integer productQuantity;

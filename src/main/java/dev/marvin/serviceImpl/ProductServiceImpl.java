@@ -21,6 +21,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,8 +72,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductResponse> getAll() {
-        log.info("Inside getAll method of ProductServiceImpl");
+    public Collection<ProductResponse> getAll() {
+        return null;
+    }
+
+    @Override
+    public Page<ProductResponse> getAllPaginated() {
+        log.info("Inside getAllPaginated method of ProductServiceImpl");
         try {
             Sort sort = Sort.by(Sort.Direction.DESC, PaginationConstants.SORT_COLUMN);
             Pageable pageable = PageRequest.of(PaginationConstants.PAGE_NUMBER, PaginationConstants.PAGE_SIZE, sort);
@@ -80,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
             List<ProductResponse> productResponseList = productPage.getContent().stream().map(Mapper::mapToDto).toList();
             return new PageImpl<>(productResponseList, pageable, productPage.getTotalElements());
         } catch (Exception e) {
-            log.error("Unexpected error occurred in getAll method of ProductServiceImpl: {}", e.getMessage(), e);
+            log.error("Unexpected error occurred in getAllPaginated method of ProductServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
     }
