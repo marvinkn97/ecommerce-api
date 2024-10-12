@@ -1,7 +1,6 @@
 package dev.marvin.controller;
 
 import dev.marvin.dto.CategoryRequest;
-import dev.marvin.dto.CategoryResponse;
 import dev.marvin.dto.ResponseDto;
 import dev.marvin.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,13 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/categories")
@@ -39,21 +34,21 @@ public class CategoryController {
 
     @GetMapping
     @Operation(summary = "fetch all", description = "retrieve a list of categories", method = "GET")
-    public ResponseEntity<Collection<CategoryResponse>> getAll() {
+    public ResponseEntity<ResponseDto<Object>> getAll() {
         log.info("Inside getAll method of CategoryController");
         return ResponseEntity.ok(categoryService.getAll());
     }
 
     @GetMapping("/paginated")
     @Operation(summary = "fetch all paginated", description = "retrieve a paginated list of categories", method = "GET")
-    public ResponseEntity<Page<CategoryResponse>> getAllPaginated() {
+    public ResponseEntity<ResponseDto<Object>> getAllPaginated() {
         log.info("Inside getAllPaginated method of CategoryController");
         return ResponseEntity.ok(categoryService.getAllPaginated());
     }
 
     @GetMapping("/{categoryId}")
     @Operation(summary = "fetch one", description = "retrieve a specified category", method = "GET")
-    public ResponseEntity<CategoryResponse> getOne(@PathVariable("categoryId") Integer categoryId) {
+    public ResponseEntity<ResponseDto<Object>> getOne(@PathVariable("categoryId") Integer categoryId) {
         log.info("Inside getOne method of CategoryController");
         return ResponseEntity.ok(categoryService.getOne(categoryId));
     }
@@ -64,7 +59,7 @@ public class CategoryController {
     @Operation(summary = "update", description = "update an existing category", method = "PUT")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Category updated successfully"),
             @ApiResponse(responseCode = "500", description = "Failed to update Category")})
-    public ResponseEntity<Map<String, Object>> update(@PathVariable("categoryId") Integer categoryId, @Valid @RequestBody CategoryRequest categoryRequest) {
+    public ResponseEntity<ResponseDto<String>> update(@PathVariable("categoryId") Integer categoryId, @Valid @RequestBody CategoryRequest categoryRequest) {
         log.info("Inside update method of CategoryController");
         return ResponseEntity.ok(categoryService.update(categoryId, categoryRequest));
     }
@@ -74,7 +69,7 @@ public class CategoryController {
     @Operation(summary = "toggle status", description = "activate/deactivate existing category", method = "PUT")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Category status updated successfully"),
             @ApiResponse(responseCode = "500", description = "Failed to update Category status")})
-    public ResponseEntity<Map<String, Object>> toggleStatus(@PathVariable("categoryId") Integer categoryId) {
+    public ResponseEntity<ResponseDto<String>> toggleStatus(@PathVariable("categoryId") Integer categoryId) {
         log.info("Inside delete method of CategoryController");
         return ResponseEntity.ok(categoryService.toggleStatus(categoryId));
     }

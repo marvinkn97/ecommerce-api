@@ -24,7 +24,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -57,11 +56,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<CategoryResponse> getAll() {
+    public ResponseDto<Object> getAll() {
         log.info("Inside getAll method of CategoryServiceImpl");
         try {
-            return categoryRepository.findAll().stream().map(Mapper::mapToDto)
+            Collection<CategoryResponse> categories = categoryRepository.findAll().stream().map(Mapper::mapToDto)
                     .toList();
+            return new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), categories);
         } catch (Exception e) {
             log.error("Unexpected error occurred in getAllPaginated method of CategoryServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
@@ -70,14 +70,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CategoryResponse> getAllPaginated() {
+    public ResponseDto<Object> getAllPaginated() {
         log.info("Inside getAllPaginated method of CategoryServiceImpl");
         try {
             Pageable pageable = PageRequest.of(PaginationConstants.PAGE_NUMBER, PaginationConstants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, PaginationConstants.SORT_COLUMN));
             Page<Category> categoryPage = categoryRepository.getCategories(pageable);
             List<CategoryResponse> categoryResponseList = categoryPage.getContent().stream().map(Mapper::mapToDto)
                     .toList();
-            return new PageImpl<>(categoryResponseList, pageable, categoryPage.getTotalElements());
+            return new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), new PageImpl<>(categoryResponseList, pageable, categoryPage.getTotalElements()));
         } catch (Exception e) {
             log.error("Unexpected error occurred in getAllPaginated method of CategoryServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
@@ -86,12 +86,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public CategoryResponse getOne(Integer categoryId) {
+    public ResponseDto<Object> getOne(Integer categoryId) {
         log.info("Inside getOne method of CategoryServiceImpl");
         try {
-            return categoryRepository.findById(categoryId)
+            CategoryResponse categoryResponse = categoryRepository.findById(categoryId)
                     .map(Mapper::mapToDto)
                     .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
+            return new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), categoryResponse);
         } catch (ResourceNotFoundException e) {
             log.error("Category not found exception: {}", e.getMessage(), e);
             throw e;
@@ -104,7 +105,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public Map<String, Object> update(Integer categoryId, CategoryRequest categoryRequest) {
+    public ResponseDto<String> update(Integer categoryId, CategoryRequest categoryRequest) {
         log.info("Inside update method of CategoryServiceImpl");
         try {
             Category category = getCategoryById(categoryId);
@@ -112,8 +113,7 @@ public class CategoryServiceImpl implements CategoryService {
                 category.setCategoryName(categoryRequest.categoryName());
             }
             categoryRepository.save(category);
-            return Map.of("status", HttpStatus.OK.getReasonPhrase(), "message", "Category with Id %s updated successfully".formatted(category.getId()));
-
+            return new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Category with Id %s updated successfully".formatted(category.getId()));
         } catch (ResourceNotFoundException e) {
             log.error("Category not found exception: {}", e.getMessage(), e);
             throw e;
@@ -125,7 +125,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public Map<String, Object> toggleStatus(Integer categoryId) {
+    public ResponseDto<String> toggleStatus(Integer categoryId) {
         log.info("Inside toggleStatus method of CategoryServiceImpl");
         try {
             Category category = getCategoryById(categoryId);
@@ -133,8 +133,7 @@ public class CategoryServiceImpl implements CategoryService {
             Status updatedStatus = currentStatus.equals(Status.Active) ? Status.Inactive : Status.Active;
             category.setStatus(updatedStatus);
             categoryRepository.save(category);
-            return Map.of("status", HttpStatus.OK.getReasonPhrase(), "message", "Category status with Id %s updated successfully".formatted(category.getId()));
-
+            return new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Category status with Id %s updated successfully".formatted(category.getId()));
         } catch (ResourceNotFoundException e) {
             log.error("Category not found: {}", e.getMessage(), e);
             throw e;
