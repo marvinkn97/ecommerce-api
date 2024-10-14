@@ -1,36 +1,53 @@
 package dev.marvin.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.marvin.exception.ErrorResponse;
-import dev.marvin.service.JwtService;
+import dev.marvin.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.time.Clock;
-import java.time.LocalDateTime;
 
-//@Component
+@Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtValidationFilter extends OncePerRequestFilter {
-    private final JwtService jwtService;
+    private final JwtUtils jwtUtils;
+    private final UserDetailsService userDetailsService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if(!StringUtils.hasText(authHeader)){
-            ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(Clock.systemDefaultZone()), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), "Invalid Token");
-            String error = new ObjectMapper().writeValueAsString(errorResponse);
-            response.getWriter().print(error);
-            return;
-        }
-        //if(authHeader.startsWith("Bearer"))
+       log.info("JwtValidationFilter invoked");
+        String token = jwtUtils.getTokenFromHeader(request);
 
+       if(!StringUtils.hasText(token)){
+           log.info("No token present...moving on to the next filter in chain ");
+           filterChain.doFilter(request, response);
+           return;
+       }
+
+        if (StringUtils.hasText(token) && Boolean.TRUE.equals(jwtUtils.validateToken(token))) {
+            String email = jwtUtils.extractUsernameFromToken(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+            log.info("usernamePasswordAuthenticationToken: {}", usernamePasswordAuthenticationToken);
+            usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
+
+            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+            filterChain.doFilter(request, response);
+        }
     }
 }

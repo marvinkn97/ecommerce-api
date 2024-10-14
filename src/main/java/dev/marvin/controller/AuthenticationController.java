@@ -2,7 +2,8 @@ package dev.marvin.controller;
 
 import dev.marvin.dto.AuthenticationRequest;
 import dev.marvin.dto.AuthenticationResponse;
-import dev.marvin.service.JwtService;
+import dev.marvin.dto.ResponseDto;
+import dev.marvin.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,21 +18,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("api/v1/auth")
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
+    private final JwtUtils jwtUtils;
 
     @PostMapping
-    public ResponseEntity<?> authenticate(AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<ResponseDto<Object>> authenticate(AuthenticationRequest authenticationRequest) {
         log.info("Inside authenticate method of AuthenticationController");
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.username(), authenticationRequest.password()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.email(),
+                authenticationRequest.password()));
         if (!authentication.isAuthenticated() || ObjectUtils.isEmpty(authentication)) {
             throw new BadCredentialsException(HttpStatus.UNAUTHORIZED.getReasonPhrase());
         }
-        String token = jwtService.generateToken(authentication);
-        return ResponseEntity.ok(new AuthenticationResponse(token));
+        String token = jwtUtils.generateToken(authentication);
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), new AuthenticationResponse(token)));
     }
 }

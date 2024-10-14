@@ -28,11 +28,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(rollbackFor = Exception.class)
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    @Transactional
     public ResponseDto<String> add(CategoryRequest categoryRequest) {
         log.info("Inside add method of CategoryServiceImpl");
         try {

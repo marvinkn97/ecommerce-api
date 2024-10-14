@@ -36,6 +36,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(buildErrorResponseObject(HttpStatus.NOT_FOUND, e.getMessage()));
     }
 
+    @ExceptionHandler(RequestValidationException.class)
+    public ResponseEntity<Object> handleRequestValidationException(RequestValidationException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(buildErrorResponseObject(HttpStatus.BAD_REQUEST, e.getMessage()));
+    }
+
     @SuppressWarnings("NullableProblems")
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
