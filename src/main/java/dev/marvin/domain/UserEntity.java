@@ -1,34 +1,37 @@
 package dev.marvin.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "tbl_users")
-@Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+public class UserEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String fullName;
+
+    @Column(unique = true)
     private String email;
     private String password;
+
+    @Column(unique = true)
     private String mobileNumber;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private RoleEntity roleEntity;
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+
+    private Boolean isFullyRegistered = false;
+
+    @ManyToMany
+    Set<Address> addresses = new HashSet<>();
 }

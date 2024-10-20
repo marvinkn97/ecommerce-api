@@ -3,6 +3,7 @@ package dev.marvin.serviceImpl;
 import dev.marvin.domain.RoleEntity;
 import dev.marvin.domain.RoleEnum;
 import dev.marvin.domain.UserEntity;
+import dev.marvin.dto.ResponseDto;
 import dev.marvin.dto.UserRegistrationRequest;
 import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.repository.RoleRepository;
@@ -23,7 +24,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public void add(UserRegistrationRequest registrationRequest) {
+    public ResponseDto<String> add(UserRegistrationRequest registrationRequest) {
         log.info("Inside add method of UserServiceImpl");
         try {
             UserEntity user = new UserEntity();
@@ -37,12 +38,16 @@ public class UserServiceImpl implements UserService {
 
             userRepository.save(user);
 
+            return new ResponseDto<>(null, null);
+
         } catch (DataIntegrityViolationException e) {
             log.info("DataIntegrityViolationException: {}", e.getMessage(), e);
             if (e.getMessage().contains("email")) {
                 throw new DuplicateResourceException("email already taken");
             } else if (e.getMessage().contains("mobile_number")) {
                 throw new DuplicateResourceException("mobile number already taken");
+            }else{
+                throw new DuplicateResourceException(e.getMessage());
             }
         } catch (Exception e) {
             log.error("unexpected error occurred in add method of UserServiceImpl: {}", e.getMessage(), e);

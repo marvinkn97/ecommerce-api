@@ -34,15 +34,15 @@ public class WebAuthConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource))
+                .cors(c -> c.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(request -> {
-                    request.requestMatchers("*/public/**").permitAll();
-                    request.anyRequest().permitAll();
+                .authorizeHttpRequests(c -> {
+                    c.requestMatchers("*/public/**").permitAll();
+                    c.anyRequest().permitAll();
                 })
                 .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .exceptionHandling(c -> c.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .build();
     }
 

@@ -25,6 +25,7 @@ public class CategoryController {
     @PostMapping
     @Operation(summary = "create", description = "create a new category", method = "POST")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Category added successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "500", description = "Failed to add Category")})
 //    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseDto<String>> add(@Valid @RequestBody CategoryRequest categoryRequest) {

@@ -1,7 +1,9 @@
 package dev.marvin.service;
 
+import dev.marvin.dto.ResponseDto;
 import dev.marvin.dto.UserRegistrationRequest;
 
 public interface UserService {
-   void add(UserRegistrationRequest registrationRequest);
+   ResponseDto<String> add(UserRegistrationRequest registrationRequest);
+
 }
