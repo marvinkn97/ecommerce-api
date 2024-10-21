@@ -32,17 +32,11 @@ public class AuthenticationController {
     private final JwtUtils jwtUtils;
     private final OtpUtils otpUtils;
 
-    @PostMapping("/pre")
+    @PostMapping("/otp-request")
     public ResponseEntity<ResponseDto<Object>> preAuthentication(@Valid @RequestBody PreAuthRequest preAuthRequest) {
-        if (!emailOrMobileRequest.isValid()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseDto<>(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Invalid request provide either email or mobile"));
-        }
 
-
-        otpUtils.generateAndSendOtp(emailOrMobileRequest.email());
-        new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP sent successfully");
-        return null;
+        otpUtils.generateAndSendOtp(preAuthRequest);
+         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP sent successfully"));
     }
 
     @PostMapping
