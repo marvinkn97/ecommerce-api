@@ -1,15 +1,20 @@
 package dev.marvin.serviceImpl;
 
+import dev.marvin.constants.MessageConstants;
 import dev.marvin.dto.SmsRequest;
 import dev.marvin.service.SmsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.util.Map;
 
 @Service
@@ -27,16 +32,22 @@ public class TiaraConnectSmsServiceImpl implements SmsService {
     @Override
     public void sendSms(SmsRequest smsRequest) {
         log.info("Inside sendSms method of TiaraConnectSmsServiceImpl");
-        RestTemplate restTemplate = restTemplateBuilder.build();
+        try {
+            RestTemplate restTemplate = restTemplateBuilder
+                    .setConnectTimeout(Duration.ofSeconds(10))
+                    .setReadTimeout(Duration.ofSeconds(10))
+                    .build();
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(apiKey));
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+            httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(apiKey));
 
-        RequestEntity<SmsRequest> requestEntity = RequestEntity.post(apiEndpoint).headers(httpHeaders).body(smsRequest);
+            RequestEntity<SmsRequest> requestEntity = RequestEntity.post(apiEndpoint).headers(httpHeaders).body(smsRequest);
 
-        ResponseEntity<Map> response = restTemplate.exchange(requestEntity, Map.class);
-
-        System.out.println(response.getBody());
+            ResponseEntity<Map> response = restTemplate.exchange(requestEntity, Map.class);
+            log.debug("Response: {}", response.getBody());
+        } catch (Exception e) {
+            log.error(MessageConstants.UNEXPECTED_ERROR, e.getMessage(), e);
+        }
     }
 }

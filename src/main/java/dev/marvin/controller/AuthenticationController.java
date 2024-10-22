@@ -1,9 +1,7 @@
 package dev.marvin.controller;
 
-import dev.marvin.dto.AuthenticationRequest;
-import dev.marvin.dto.AuthenticationResponse;
-import dev.marvin.dto.PreAuthRequest;
-import dev.marvin.dto.ResponseDto;
+import dev.marvin.dto.*;
+import dev.marvin.service.UserService;
 import dev.marvin.utils.JwtUtils;
 import dev.marvin.utils.OtpUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,13 +29,32 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final OtpUtils otpUtils;
+    private final UserService userService;
 
     @PostMapping("/otp-request")
-    public ResponseEntity<ResponseDto<Object>> preAuthentication(@Valid @RequestBody PreAuthRequest preAuthRequest) {
-
-        otpUtils.generateAndSendOtp(preAuthRequest);
-         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP sent successfully"));
+    public ResponseEntity<ResponseDto<Object>> otpRequest(@Valid @RequestBody OtpRequest otpRequest) {
+        log.info("Inside otpRequest method of AuthenticationController");
+        otpUtils.generateAndSendOtp(otpRequest);
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP sent successfully"));
     }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<ResponseDto<Object>> verifyOtp(@Valid @RequestBody OtpVerificationRequest otpVerificationRequest) {
+        log.info("Inside verifyOtp method of AuthenticationController");
+        if (otpUtils.verifyOtp(otpVerificationRequest)) {
+
+            return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP sent successfully"));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((new ResponseDto<>(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Bad OTP request")));
+        }
+    }
+
+    @PostMapping("/create-password")
+    public ResponseEntity<ResponseDto<String>> createPassword(@Valid @RequestBody PasswordCreationRequest passwordCreationRequest) {
+        log.info("Inside createPassword method of AuthenticationController");
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.updatePassword(passwordCreationRequest));
+    }
+
 
     @PostMapping
     public ResponseEntity<ResponseDto<Object>> authenticate(AuthenticationRequest authenticationRequest) {

@@ -17,14 +17,12 @@ public class UserEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String fullName;
-
-    @Column(unique = true)
-    private String email;
-    private String password;
 
     @Column(unique = true)
     private String mobileNumber;
+
+    private String fullName;
+    private String password;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")

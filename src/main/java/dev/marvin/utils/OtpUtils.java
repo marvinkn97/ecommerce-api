@@ -1,55 +1,90 @@
 package dev.marvin.utils;
 
 import dev.marvin.domain.OTP;
-import dev.marvin.dto.PreAuthRequest;
+import dev.marvin.dto.OtpRequest;
+import dev.marvin.dto.OtpVerificationRequest;
 import dev.marvin.dto.SmsRequest;
+import dev.marvin.exception.RequestValidationException;
+import dev.marvin.exception.ServiceException;
 import dev.marvin.repository.OtpRepository;
 import dev.marvin.service.SmsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Random;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class OtpUtils {
     private final OtpRepository otpRepository;
     private final SmsService smsService;
 
-    public void generateAndSendOtp(PreAuthRequest preAuthRequest) {
-        if (preAuthRequest.hasMobile()) {
-            // Generate OTP
-            String otp = generateOtp();
+    @Transactional
+    @Async
+    public void generateAndSendOtp(OtpRequest otpRequest) {
+        try {
+            if (otpRequest.hasMobile()) {
+                // Generate OTP
+                String otp = generateOtp();
 
-            // Save OTP to DB or cache (with expiration) -start with db learn cache with redis later
-            OTP otpEntity = new OTP();
-            otpEntity.setOtp(otp);
-            otpEntity.setMobile(preAuthRequest.mobile());
-            otpEntity.setExpiryTime(LocalDateTime.now().plusMinutes(5));// Expires in 5 min
-            OTP savedOtp = otpRepository.save(otpEntity);
+                // Save OTP to DB or cache (with expiration) - start with db learn cache with redis later
+                OTP otpEntity = new OTP();
+                otpEntity.setOtp(otp);
+                otpEntity.setMobile(otpRequest.mobile());
 
-            // Send OTP via SMS
-            String message = """
-                    Dear customer.
-                    Your OTP code is %s
-                    The code is valid for %s minutes
-                    """.formatted(savedOtp.getOtp(), savedOtp.getExpiryTime().getMinute());
-            SmsRequest smsRequest = new SmsRequest(preAuthRequest.mobile(), "TIARACONECT", message);
-            smsService.sendSms(smsRequest);
+                long duration = 5L;
+
+                otpEntity.setExpiryTime(LocalDateTime.now().plusMinutes(duration));// Expires in [duration] min
+                OTP savedOtp = otpRepository.save(otpEntity);
+
+                // Send OTP via SMS
+                String message = """
+                        Dear customer.
+                        Your OTP code is %s
+                        The code is valid for %s minutes
+                        """.formatted(savedOtp.getOtp(), duration);
+                SmsRequest smsRequest = new SmsRequest(otpRequest.mobile(), "TIARACONECT", message);
+                smsService.sendSms(smsRequest);
+            }
+
+        } catch (Exception e) {
+            log.error("Error generating or sending OTP", e);
+            throw new ServiceException("Failed to generate or send OTP", e);
         }
-
     }
 
-    public boolean verifyOtp(String emailOrMobile, String otp) {
-        // Retrieve the stored OTP from DB or cache
-        OTP storedOtp = otpRepository.findByMobile(emailOrMobile);
+    public boolean verifyOtp(OtpVerificationRequest otpVerificationRequest) {
 
-        // Check if OTP matches and is not expired
-        if (storedOtp != null && storedOtp.getOtp().equals(otp) && !isOtpExpired(storedOtp)) {
-            return true;
+        if(!otpVerificationRequest.isValid()){
+            throw new RequestValidationException("Bad Request");
         }
-        return false;
+
+        // Retrieve the stored OTP from DB or cache
+        OTP storedOtp = otpRepository.findByMobile(otpVerificationRequest.mobile());
+
+        // Check if OTP exists
+        if (storedOtp == null) {
+            throw new RequestValidationException("OTP does not exist");
+        }
+
+        // Check if OTP is expired
+        if (isOtpExpired(storedOtp)) {
+            throw new RequestValidationException("OTP is expired");
+        }
+
+        // Check if OTP matches
+        if (!storedOtp.getOtp().equals(otpVerificationRequest.otp())) {
+            throw new RequestValidationException("OTP is invalid");
+        }
+
+        // Optionally, delete OTP after successful verification to prevent reuse
+        otpRepository.delete(storedOtp);
+        return true;
     }
 
     private boolean isOtpExpired(OTP otp) {
