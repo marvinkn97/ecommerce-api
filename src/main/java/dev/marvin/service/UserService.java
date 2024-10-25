@@ -9,4 +9,6 @@ public interface UserService {
 
     ResponseDto<String> updatePassword(PasswordCreationRequest passwordCreationRequest);
 
+    Boolean isUserRegistered(String mobileNumber);
+
 }

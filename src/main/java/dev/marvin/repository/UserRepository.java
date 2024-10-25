@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
-    @Query("SELECT u FROM UserEntity u WHERE u.mobile = :mobile")
+    @Query("SELECT u FROM UserEntity u WHERE u.mobileNumber = :mobile")
     Optional<UserEntity> findByMobile(@Param("mobile") String mobile);
 }

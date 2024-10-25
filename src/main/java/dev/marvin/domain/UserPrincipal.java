@@ -20,7 +20,7 @@ public record UserPrincipal(UserEntity userEntity) implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userEntity.getEmail();
+        return userEntity.getMobileNumber();
     }
 
     @Override

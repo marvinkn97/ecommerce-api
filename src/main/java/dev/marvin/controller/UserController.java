@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
+
     @PostMapping("/register")
     @Operation(summary = "create", description = "create a new user", method = "POST")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Register with email send OTP"),

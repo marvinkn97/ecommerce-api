@@ -31,19 +31,22 @@ public class AuthenticationController {
     private final OtpUtils otpUtils;
     private final UserService userService;
 
-    @PostMapping("/otp-request")
-    public ResponseEntity<ResponseDto<Object>> otpRequest(@Valid @RequestBody OtpRequest otpRequest) {
-        log.info("Inside otpRequest method of AuthenticationController");
-        otpUtils.generateAndSendOtp(otpRequest);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP sent successfully"));
+    @PostMapping("/verify-user")
+    public ResponseEntity<ResponseDto<Object>> verifyUser(@Valid @RequestBody PreAuthRequest preAuthRequest) {
+        log.info("Inside verifyUser method of AuthenticationController");
+        if (userService.isUserRegistered(preAuthRequest.mobile())) {
+            return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Proceed to login screen"));
+        } else {
+            otpUtils.generateAndSendOtp(preAuthRequest);
+            return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP sent successfully. Proceed to otp verification screen"));
+        }
     }
 
     @PostMapping("/verify-otp")
     public ResponseEntity<ResponseDto<Object>> verifyOtp(@Valid @RequestBody OtpVerificationRequest otpVerificationRequest) {
         log.info("Inside verifyOtp method of AuthenticationController");
         if (otpUtils.verifyOtp(otpVerificationRequest)) {
-
-            return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP sent successfully"));
+            return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP is valid. Proceed to password creation screen"));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((new ResponseDto<>(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Bad OTP request")));
         }

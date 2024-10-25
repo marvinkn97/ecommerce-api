@@ -72,12 +72,17 @@ public class UserServiceImpl implements UserService {
             // Save the updated user
             userRepository.save(user);
 
-            return new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), "Password created successfully");
+            return new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), "Password updated successfully");
 
         } catch (Exception e) {
             log.error("unexpected error occurred in add method of UserServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
 
+    }
+
+    @Override
+    public Boolean isUserRegistered(String mobileNumber) {
+        return userRepository.findByMobile(mobileNumber).isPresent();
     }
 }

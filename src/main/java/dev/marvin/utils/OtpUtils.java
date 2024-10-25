@@ -1,7 +1,7 @@
 package dev.marvin.utils;
 
 import dev.marvin.domain.OTP;
-import dev.marvin.dto.OtpRequest;
+import dev.marvin.dto.PreAuthRequest;
 import dev.marvin.dto.OtpVerificationRequest;
 import dev.marvin.dto.SmsRequest;
 import dev.marvin.exception.RequestValidationException;
@@ -26,16 +26,16 @@ public class OtpUtils {
 
     @Transactional
     @Async
-    public void generateAndSendOtp(OtpRequest otpRequest) {
+    public void generateAndSendOtp(PreAuthRequest preAuthRequest) {
         try {
-            if (otpRequest.hasMobile()) {
+            if (preAuthRequest.hasMobile()) {
                 // Generate OTP
                 String otp = generateOtp();
 
                 // Save OTP to DB or cache (with expiration) - start with db learn cache with redis later
                 OTP otpEntity = new OTP();
                 otpEntity.setOtp(otp);
-                otpEntity.setMobile(otpRequest.mobile());
+                otpEntity.setMobile(preAuthRequest.mobile());
 
                 long duration = 5L;
 
@@ -48,7 +48,7 @@ public class OtpUtils {
                         Your OTP code is %s
                         The code is valid for %s minutes
                         """.formatted(savedOtp.getOtp(), duration);
-                SmsRequest smsRequest = new SmsRequest(otpRequest.mobile(), "TIARACONECT", message);
+                SmsRequest smsRequest = new SmsRequest(preAuthRequest.mobile(), "TIARACONECT", message);
                 smsService.sendSms(smsRequest);
             }
 
