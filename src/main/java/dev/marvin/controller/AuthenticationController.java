@@ -55,7 +55,8 @@ public class AuthenticationController {
     @PostMapping("/create-password")
     public ResponseEntity<ResponseDto<String>> createPassword(@Valid @RequestBody PasswordCreationRequest passwordCreationRequest) {
         log.info("Inside createPassword method of AuthenticationController");
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.updatePassword(passwordCreationRequest));
+        userService.setPasswordForUser(passwordCreationRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.setPasswordForUser(passwordCreationRequest));
     }
 
 

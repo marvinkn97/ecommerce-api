@@ -7,7 +7,7 @@ import dev.marvin.dto.UserRegistrationRequest;
 public interface UserService {
     ResponseDto<String> add(UserRegistrationRequest registrationRequest);
 
-    ResponseDto<String> updatePassword(PasswordCreationRequest passwordCreationRequest);
+    ResponseDto<String> setPasswordForUser(PasswordCreationRequest passwordCreationRequest);
 
     Boolean isUserRegistered(String mobileNumber);
 

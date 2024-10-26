@@ -8,6 +8,7 @@ import dev.marvin.dto.PasswordCreationRequest;
 import dev.marvin.dto.ResponseDto;
 import dev.marvin.dto.UserRegistrationRequest;
 import dev.marvin.exception.DuplicateResourceException;
+import dev.marvin.exception.RequestValidationException;
 import dev.marvin.exception.ResourceNotFoundException;
 import dev.marvin.exception.ServiceException;
 import dev.marvin.repository.RoleRepository;
@@ -56,26 +57,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseDto<String> updatePassword(PasswordCreationRequest passwordCreationRequest) {
+    public ResponseDto<String> setPasswordForUser(PasswordCreationRequest passwordCreationRequest) {
         log.info("Inside updatePassword method of UserServiceImpl");
         try {
             // Retrieve the user by mobile number
             UserEntity user = userRepository.findByMobile(passwordCreationRequest.mobile())
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with given mobile %s".formatted(passwordCreationRequest.mobile())));
 
-            // Encode the password
-            String encodedPassword = passwordEncoder.encode(passwordCreationRequest.password());
+            if (!passwordCreationRequest.passwordMatch()) {
+                throw new RequestValidationException("Password and confirm password do not match.");
+            }
+                // Encode the password
+                String encodedPassword = passwordEncoder.encode(passwordCreationRequest.password());
+                // Update the user's password
+                user.setPassword(encodedPassword);
 
-            // Update the user's password
-            user.setPassword(encodedPassword);
+                // Save the updated user
+                userRepository.save(user);
+                return new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), "Password set successfully for user with mobile %s".formatted(passwordCreationRequest.mobile()));
 
-            // Save the updated user
-            userRepository.save(user);
 
-            return new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), "Password updated successfully");
-
+        } catch (ResourceNotFoundException | RequestValidationException e) {
+            log.error("Error in setPasswordForUser: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
-            log.error("unexpected error occurred in add method of UserServiceImpl: {}", e.getMessage(), e);
+            log.error("unexpected error occurred in setPasswordForUser method of UserServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
 
