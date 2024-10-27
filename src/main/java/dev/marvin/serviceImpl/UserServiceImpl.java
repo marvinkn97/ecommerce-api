@@ -6,7 +6,6 @@ import dev.marvin.domain.RoleEnum;
 import dev.marvin.domain.UserEntity;
 import dev.marvin.dto.PasswordCreationRequest;
 import dev.marvin.dto.ResponseDto;
-import dev.marvin.dto.UserRegistrationRequest;
 import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.exception.RequestValidationException;
 import dev.marvin.exception.ResourceNotFoundException;
@@ -30,11 +29,11 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public ResponseDto<String> add(UserRegistrationRequest registrationRequest) {
+    public ResponseDto<String> registerMobile(String mobile) {
         log.info("Inside add method of UserServiceImpl");
         try {
             UserEntity user = new UserEntity();
-            user.setMobileNumber(registrationRequest.mobileNumber());
+            user.setMobileNumber(mobile);
 
             RoleEntity role = roleRepository.findByName(RoleEnum.USER.name()).orElse(null);
             user.setRoleEntity(role);
@@ -43,22 +42,20 @@ public class UserServiceImpl implements UserService {
 
         } catch (DataIntegrityViolationException e) {
             log.info("DataIntegrityViolationException: {}", e.getMessage(), e);
-            if (e.getMessage().contains("email")) {
-                throw new DuplicateResourceException("email already taken");
-            } else if (e.getMessage().contains("mobile_number")) {
+            if (e.getMessage().contains("mobile_number")) {
                 throw new DuplicateResourceException("mobile number already taken");
             } else {
                 throw new DuplicateResourceException(e.getMessage());
             }
         } catch (Exception e) {
-            log.error("unexpected error occurred in add method of UserServiceImpl: {}", e.getMessage(), e);
+            log.error("Unexpected error occurred in registerMobile method of UserServiceImpl: {}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public ResponseDto<String> setPasswordForUser(PasswordCreationRequest passwordCreationRequest) {
-        log.info("Inside updatePassword method of UserServiceImpl");
+        log.info("Inside setPasswordForUser method of UserServiceImpl");
         try {
             // Retrieve the user by mobile number
             UserEntity user = userRepository.findByMobile(passwordCreationRequest.mobile())
@@ -67,21 +64,20 @@ public class UserServiceImpl implements UserService {
             if (!passwordCreationRequest.passwordMatch()) {
                 throw new RequestValidationException("Password and confirm password do not match.");
             }
-                // Encode the password
-                String encodedPassword = passwordEncoder.encode(passwordCreationRequest.password());
-                // Update the user's password
-                user.setPassword(encodedPassword);
+            // Encode the password
+            String encodedPassword = passwordEncoder.encode(passwordCreationRequest.password());
+            // Update the user's password
+            user.setPassword(encodedPassword);
 
-                // Save the updated user
-                userRepository.save(user);
-                return new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), "Password set successfully for user with mobile %s".formatted(passwordCreationRequest.mobile()));
-
+            // Save the updated user
+            userRepository.save(user);
+            return new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), "Password set successfully for user with mobile %s".formatted(passwordCreationRequest.mobile()));
 
         } catch (ResourceNotFoundException | RequestValidationException e) {
             log.error("Error in setPasswordForUser: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error("unexpected error occurred in setPasswordForUser method of UserServiceImpl: {}", e.getMessage(), e);
+            log.error("Unexpected error occurred in setPasswordForUser method of UserServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
 
@@ -89,6 +85,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean isUserRegistered(String mobileNumber) {
+        log.info("Inside isUserRegistered method of UserServiceImpl");
         return userRepository.findByMobile(mobileNumber).isPresent();
     }
 }

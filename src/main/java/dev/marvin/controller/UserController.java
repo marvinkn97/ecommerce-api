@@ -1,7 +1,7 @@
 package dev.marvin.controller;
 
 import dev.marvin.dto.ResponseDto;
-import dev.marvin.dto.UserRegistrationRequest;
+import dev.marvin.dto.UserProfileRequest;
 import dev.marvin.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,9 +30,10 @@ public class UserController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Register with email send OTP"),
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "500", description = "Failed to register")})
-    public ResponseEntity<ResponseDto<String>> register(@Valid @RequestBody UserRegistrationRequest registrationRequest) {
+    public ResponseEntity<ResponseDto<String>> register(@Valid @RequestBody UserProfileRequest registrationRequest) {
         log.info("Inside add method of UserController");
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.add(registrationRequest));
+//        return ResponseEntity.status(HttpStatus.CREATED).body(userService.add(registrationRequest));
+        return null;
     }
 
 

@@ -28,8 +28,6 @@ public class UserEntity extends BaseEntity {
     @JoinColumn(name = "role_id")
     private RoleEntity roleEntity;
 
-    private Boolean isFullyRegistered = false;
-
     @ManyToMany
     Set<Address> addresses = new HashSet<>();
 }

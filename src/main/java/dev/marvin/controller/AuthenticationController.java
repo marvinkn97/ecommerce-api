@@ -4,6 +4,7 @@ import dev.marvin.dto.*;
 import dev.marvin.service.UserService;
 import dev.marvin.utils.JwtUtils;
 import dev.marvin.utils.OtpUtils;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class AuthenticationController {
     private final UserService userService;
 
     @PostMapping("/verify-user")
+    @Operation(summary = "Verify user", description = "Verify user by mobile number", method = "POST")
     public ResponseEntity<ResponseDto<Object>> verifyUser(@Valid @RequestBody PreAuthRequest preAuthRequest) {
         log.info("Inside verifyUser method of AuthenticationController");
         if (userService.isUserRegistered(preAuthRequest.mobile())) {
@@ -45,11 +47,8 @@ public class AuthenticationController {
     @PostMapping("/verify-otp")
     public ResponseEntity<ResponseDto<Object>> verifyOtp(@Valid @RequestBody OtpVerificationRequest otpVerificationRequest) {
         log.info("Inside verifyOtp method of AuthenticationController");
-        if (otpUtils.verifyOtp(otpVerificationRequest)) {
-            return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP is valid. Proceed to password creation screen"));
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((new ResponseDto<>(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Bad OTP request")));
-        }
+        userService.registerMobile(otpVerificationRequest.mobile());
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP is valid. Proceed to password creation screen"));
     }
 
     @PostMapping("/create-password")
@@ -57,6 +56,12 @@ public class AuthenticationController {
         log.info("Inside createPassword method of AuthenticationController");
         userService.setPasswordForUser(passwordCreationRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.setPasswordForUser(passwordCreationRequest));
+    }
+
+    @PostMapping("/complete-profile")
+    public ResponseEntity<ResponseDto<String>> completeProfile(@Valid UserProfileRequest userProfileRequest){
+        log.info("Inside completeProfile method of AuthenticationController");
+        return null;
     }
 
 
@@ -71,4 +76,6 @@ public class AuthenticationController {
         String token = jwtUtils.generateToken(authentication);
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), new AuthenticationResponse(token)));
     }
+
+
 }

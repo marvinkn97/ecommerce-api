@@ -58,14 +58,14 @@ public class OtpUtils {
         }
     }
 
-    public boolean verifyOtp(OtpVerificationRequest otpVerificationRequest) {
+    public void verifyOtp(OtpVerificationRequest otpVerificationRequest) {
 
         if(!otpVerificationRequest.isValid()){
             throw new RequestValidationException("Bad Request");
         }
 
         // Retrieve the stored OTP from DB or cache
-        OTP storedOtp = otpRepository.findByMobile(otpVerificationRequest.mobile());
+        OTP storedOtp = otpRepository.findByMobileAndOtp(otpVerificationRequest.mobile(), otpVerificationRequest.otp());
 
         // Check if OTP exists
         if (storedOtp == null) {
@@ -84,7 +84,6 @@ public class OtpUtils {
 
         // Optionally, delete OTP after successful verification to prevent reuse
         otpRepository.delete(storedOtp);
-        return true;
     }
 
     private boolean isOtpExpired(OTP otp) {

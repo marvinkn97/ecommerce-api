@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OtpRepository extends JpaRepository<OTP, Integer> {
-    @Query("SELECT otp FROM OTP otp WHERE otp.mobile = :mobile")
-    OTP findByMobile(@Param("mobile") String mobile);
+    @Query("SELECT o FROM OTP o WHERE o.mobile = :mobile AND o.otp = :otp")
+    OTP findByMobileAndOtp(@Param("mobile") String mobile, @Param("otp") String otp);
 }
