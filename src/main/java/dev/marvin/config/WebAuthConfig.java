@@ -38,8 +38,8 @@ public class WebAuthConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(c -> {
-                    c.requestMatchers("*/public/**").permitAll();
-                    c.anyRequest().permitAll();
+                    c.requestMatchers("api/v1/auth/login").permitAll();
+                    c.anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(c -> c.authenticationEntryPoint(jwtAuthenticationEntryPoint))

@@ -59,16 +59,17 @@ public class AuthenticationController {
     }
 
     @PostMapping("/complete-profile")
-    public ResponseEntity<ResponseDto<String>> completeProfile(@Valid UserProfileRequest userProfileRequest){
+    public ResponseEntity<ResponseDto<String>> completeProfile(@Valid @RequestBody UserProfileRequest userProfileRequest){
         log.info("Inside completeProfile method of AuthenticationController");
-        return null;
+        userService.completeUserProfile(userProfileRequest);
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), "Your Account has been created"));
     }
 
 
-    @PostMapping
-    public ResponseEntity<ResponseDto<Object>> authenticate(AuthenticationRequest authenticationRequest) {
+    @PostMapping("/login")
+    public ResponseEntity<ResponseDto<Object>> authenticate(@Valid @RequestBody AuthenticationRequest authenticationRequest) {
         log.info("Inside authenticate method of AuthenticationController");
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.email(),
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.mobile(),
                 authenticationRequest.password()));
         if (!authentication.isAuthenticated() || ObjectUtils.isEmpty(authentication)) {
             throw new BadCredentialsException(HttpStatus.UNAUTHORIZED.getReasonPhrase());

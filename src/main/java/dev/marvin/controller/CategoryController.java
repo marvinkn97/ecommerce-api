@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,11 +24,11 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "create", description = "create a new category", method = "POST")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Category added successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "500", description = "Failed to add Category")})
-//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseDto<String>> add(@Valid @RequestBody CategoryRequest categoryRequest) {
         log.info("Inside add method of CategoryController");
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.add(categoryRequest));
@@ -56,7 +57,7 @@ public class CategoryController {
 
 
     @PutMapping("/{categoryId}")
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "update", description = "update an existing category", method = "PUT")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Category updated successfully"),
             @ApiResponse(responseCode = "500", description = "Failed to update Category")})
@@ -66,7 +67,7 @@ public class CategoryController {
     }
 
     @PutMapping("{categoryId}/toggle-status")
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "toggle status", description = "activate/deactivate existing category", method = "PUT")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Category status updated successfully"),
             @ApiResponse(responseCode = "500", description = "Failed to update Category status")})

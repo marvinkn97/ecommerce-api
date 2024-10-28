@@ -22,11 +22,19 @@ import java.util.Map;
 @Component
 @Slf4j
 public class JwtUtils {
+
+    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
     public String generateToken(Authentication authentication) {
         log.info("Inside generateToken method of JwtUtils");
 
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        String email = userPrincipal.getUsername();
+        String mobile = userPrincipal.getUsername();
+
+        String role = userPrincipal.userEntity().getRoleEntity().getRoleName();
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);
 
         Date date = SecurityConstants.ISSUED_AT;
         log.info("iat: {}", date);
@@ -35,15 +43,13 @@ public class JwtUtils {
         log.info("exp: {}", expirationDate);
 
         return Jwts.builder()
+                .setSubject(mobile)
                 .setIssuedAt(date)
-                .setSubject(email)
+                .setIssuer(SecurityConstants.TOKEN_ISSUER)
                 .setExpiration(expirationDate)
-                .signWith(key())
+                .addClaims(claims)
+                .signWith(SECRET_KEY)
                 .compact();
-    }
-
-    private SecretKey key() {
-        return Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
     public String getTokenFromHeader(HttpServletRequest request) {
@@ -58,13 +64,9 @@ public class JwtUtils {
     public Boolean validateToken(String token) {
         log.info("Inside validateToken method of JwtUtils");
         try {
-            Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token);
+            Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
+            return claimsJws.getBody().getIssuer().equals(SecurityConstants.TOKEN_ISSUER);
 
-            if (!claimsJws.getBody().getIssuer().equals(SecurityConstants.TOKEN_ISSUER)) {
-                log.error("Token issuer is invalid");
-                return false;
-            }
-            return true;
         } catch (ExpiredJwtException e) {
             log.error("Token has expired: {}", e.getMessage());
             return false;
@@ -73,18 +75,18 @@ public class JwtUtils {
             return false;
         } catch (JwtException e) {
             log.error("JWT validation error: {}", e.getMessage(), e);
-            throw new RequestValidationException("Invalid token", e);
+            throw new RequestValidationException("Token not valid", e);
         }
     }
 
     public String extractUsernameFromToken(String token) {
-        return Jwts.parserBuilder().build().parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody().getSubject();
     }
 
     public Map<String, Object> extractClaimsFromToken(String token) {
         log.info("Inside extractClaimsFromToken method of JwtUtils");
         try {
-            Claims claims = Jwts.parserBuilder().build().parseClaimsJws(token).getBody();
+            Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
             return new HashMap<>(claims);
         } catch (JwtException e) {
             log.error("Error occurred in extractClaimsFromToken method of JwtUtils: {}", e.getMessage(), e);
