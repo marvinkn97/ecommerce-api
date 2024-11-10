@@ -36,7 +36,7 @@ public class AuthenticationController {
     @Operation(summary = "Verify user", description = "Verify user by mobile number", method = "POST")
     public ResponseEntity<ResponseDto<Object>> verifyUser(@Valid @RequestBody PreAuthRequest preAuthRequest) {
         log.info("Inside verifyUser method of AuthenticationController");
-        if (userService.isUserRegistered(preAuthRequest.mobile())) {
+        if (Boolean.TRUE.equals(userService.isUserRegistered(preAuthRequest.mobile()))) {
             return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Proceed to login screen"));
         } else {
             otpUtils.generateAndSendOtp(preAuthRequest);
@@ -47,7 +47,9 @@ public class AuthenticationController {
     @PostMapping("/verify-otp")
     public ResponseEntity<ResponseDto<Object>> verifyOtp(@Valid @RequestBody OtpVerificationRequest otpVerificationRequest) {
         log.info("Inside verifyOtp method of AuthenticationController");
-        userService.registerMobile(otpVerificationRequest.mobile());
+        if(otpUtils.verifyOtp(otpVerificationRequest)){
+            userService.registerMobile(otpVerificationRequest.mobile());
+        }
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP is valid. Proceed to password creation screen"));
     }
 

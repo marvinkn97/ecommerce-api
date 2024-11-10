@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             log.error("Unexpected error occurred in registerMobile method of UserServiceImpl: {}", e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
     }
 

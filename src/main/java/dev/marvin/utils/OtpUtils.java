@@ -58,9 +58,9 @@ public class OtpUtils {
         }
     }
 
-    public void verifyOtp(OtpVerificationRequest otpVerificationRequest) {
+    public  Boolean verifyOtp(OtpVerificationRequest otpVerificationRequest) {
 
-        if(!otpVerificationRequest.isValid()){
+        if (!otpVerificationRequest.isValid()) {
             throw new RequestValidationException("Bad Request");
         }
 
@@ -84,6 +84,7 @@ public class OtpUtils {
 
         // Optionally, delete OTP after successful verification to prevent reuse
         otpRepository.delete(storedOtp);
+        return true;
     }
 
     private boolean isOtpExpired(OTP otp) {

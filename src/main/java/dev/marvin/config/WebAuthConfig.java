@@ -30,15 +30,14 @@ public class WebAuthConfig {
     private final CorsConfigurationSource corsConfigurationSource;
     private final JwtValidationFilter jwtValidationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .cors(c -> c.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(c -> {
-                    c.requestMatchers("api/v1/auth/login").permitAll();
+                    c.requestMatchers("api/v1/auth/**").permitAll();
                     c.anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
