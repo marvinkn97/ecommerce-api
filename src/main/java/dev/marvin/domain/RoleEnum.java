@@ -1,7 +1,7 @@
 package dev.marvin.domain;
 
 public enum RoleEnum {
-    ADMIN,
-    USER,
-    SELLER
+    ROLE_ADMIN,
+    ROLE_USER,
+    ROLE_SELLER
 }

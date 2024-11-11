@@ -8,6 +8,7 @@ import dev.marvin.exception.RequestValidationException;
 import dev.marvin.exception.ServiceException;
 import dev.marvin.repository.OtpRepository;
 import dev.marvin.service.SmsService;
+import dev.marvin.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -23,6 +24,7 @@ import java.util.Random;
 public class OtpUtils {
     private final OtpRepository otpRepository;
     private final SmsService smsService;
+    private final UserService userService;
 
     @Transactional
     @Async
@@ -58,7 +60,7 @@ public class OtpUtils {
         }
     }
 
-    public  Boolean verifyOtp(OtpVerificationRequest otpVerificationRequest) {
+    public void verifyOtp(OtpVerificationRequest otpVerificationRequest) {
 
         if (!otpVerificationRequest.isValid()) {
             throw new RequestValidationException("Bad Request");
@@ -84,7 +86,6 @@ public class OtpUtils {
 
         // Optionally, delete OTP after successful verification to prevent reuse
         otpRepository.delete(storedOtp);
-        return true;
     }
 
     private boolean isOtpExpired(OTP otp) {

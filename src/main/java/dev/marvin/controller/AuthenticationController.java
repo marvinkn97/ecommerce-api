@@ -44,12 +44,11 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/verify-otp")
+    @PostMapping("/verify-otp")  // check into this method
     public ResponseEntity<ResponseDto<Object>> verifyOtp(@Valid @RequestBody OtpVerificationRequest otpVerificationRequest) {
         log.info("Inside verifyOtp method of AuthenticationController");
-        if(otpUtils.verifyOtp(otpVerificationRequest)){
-            userService.registerMobile(otpVerificationRequest.mobile());
-        }
+        otpUtils.verifyOtp(otpVerificationRequest);
+        userService.registerMobile(otpVerificationRequest.mobile());
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "OTP is valid. Proceed to password creation screen"));
     }
 

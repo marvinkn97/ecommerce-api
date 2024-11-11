@@ -1,7 +1,6 @@
 package dev.marvin.serviceImpl;
 
 import dev.marvin.constants.MessageConstants;
-import dev.marvin.domain.RoleEntity;
 import dev.marvin.domain.RoleEnum;
 import dev.marvin.domain.UserEntity;
 import dev.marvin.dto.PasswordCreationRequest;
@@ -11,7 +10,6 @@ import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.exception.RequestValidationException;
 import dev.marvin.exception.ResourceNotFoundException;
 import dev.marvin.exception.ServiceException;
-import dev.marvin.repository.RoleRepository;
 import dev.marvin.repository.UserRepository;
 import dev.marvin.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository;
 
     @Override
     @Transactional
@@ -37,9 +34,7 @@ public class UserServiceImpl implements UserService {
         try {
             UserEntity user = new UserEntity();
             user.setMobileNumber(mobile);
-
-            RoleEntity role = roleRepository.findByName(RoleEnum.USER.name()).orElse(null);
-            user.setRoleEntity(role);
+            user.setRoleEnum(RoleEnum.ROLE_USER);
             userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
             log.info("DataIntegrityViolationException: {}", e.getMessage(), e);

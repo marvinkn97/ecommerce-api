@@ -30,9 +30,9 @@ public class UserEntity {
 
     private Boolean isFullyRegistered = Boolean.FALSE;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_id")
-    private RoleEntity roleEntity;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private RoleEnum roleEnum;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

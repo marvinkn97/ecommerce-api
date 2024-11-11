@@ -31,7 +31,7 @@ public class JwtUtils {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         String mobile = userPrincipal.getUsername();
 
-        String role = userPrincipal.userEntity().getRoleEntity().getRoleName();
+        String role = userPrincipal.userEntity().getRoleEnum().name();
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
