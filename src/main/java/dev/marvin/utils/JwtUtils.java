@@ -1,9 +1,7 @@
 package dev.marvin.utils;
 
 
-import dev.marvin.domain.SecurityConstants;
 import dev.marvin.domain.UserPrincipal;
-import dev.marvin.exception.RequestValidationException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +22,7 @@ import java.util.Map;
 public class JwtUtils {
 
     private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static final String ISSUER = "dev.marvin";
 
     public String generateToken(Authentication authentication) {
         log.info("Inside generateToken method of JwtUtils");
@@ -36,16 +35,16 @@ public class JwtUtils {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
 
-        Date date = SecurityConstants.ISSUED_AT;
+        Date date = new Date(System.currentTimeMillis());
         log.info("iat: {}", date);
 
-        Date expirationDate = SecurityConstants.EXPIRES_AT;
+        Date expirationDate = new Date(date.getTime() + (1000 * 60 * 60));
         log.info("exp: {}", expirationDate);
 
         return Jwts.builder()
                 .setSubject(mobile)
                 .setIssuedAt(date)
-                .setIssuer(SecurityConstants.TOKEN_ISSUER)
+                .setIssuer(ISSUER)
                 .setExpiration(expirationDate)
                 .addClaims(claims)
                 .signWith(SECRET_KEY)
@@ -65,7 +64,7 @@ public class JwtUtils {
         log.info("Inside validateToken method of JwtUtils");
         try {
             Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
-            return claimsJws.getBody().getIssuer().equals(SecurityConstants.TOKEN_ISSUER);
+            return claimsJws.getBody().getIssuer().equals(ISSUER);
 
         } catch (ExpiredJwtException e) {
             log.error("Token has expired: {}", e.getMessage());
@@ -75,12 +74,8 @@ public class JwtUtils {
             return false;
         } catch (JwtException e) {
             log.error("JWT validation error: {}", e.getMessage(), e);
-            throw new RequestValidationException("Token not valid", e);
+            return false;
         }
-    }
-
-    public String extractUsernameFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody().getSubject();
     }
 
     public Map<String, Object> extractClaimsFromToken(String token) {

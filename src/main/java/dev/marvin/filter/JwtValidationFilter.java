@@ -8,42 +8,48 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class JwtValidationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
-    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-       log.info("JwtValidationFilter invoked");
+        log.info("JwtValidationFilter invoked");
         String token = jwtUtils.getTokenFromHeader(request);
 
-       if(!StringUtils.hasText(token)){
-           log.info("No token present...moving on to the next filter in chain ");
-           filterChain.doFilter(request, response);
-           return;
-       }
+        if (!StringUtils.hasText(token)) {
+            log.info("No token present...moving on to the next filter in chain ");
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (StringUtils.hasText(token) && Boolean.TRUE.equals(jwtUtils.validateToken(token))) {
-            String mobile = jwtUtils.extractUsernameFromToken(token);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(mobile);
+            Map<String, Object> claims = jwtUtils.extractClaimsFromToken(token);
+            log.info("claims: {}", claims);
 
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            String mobile = claims.get("sub").toString();
+            log.info("subject: {}", mobile);
 
-            log.info("usernamePasswordAuthenticationToken: {}", usernamePasswordAuthenticationToken);
+            String role = claims.get("role").toString();
+            log.info("role: {}", role);
+
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(mobile, null, List.of(new SimpleGrantedAuthority(role)));
+
             usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
+            log.info("usernamePasswordAuthenticationToken: {}", usernamePasswordAuthenticationToken);
 
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 

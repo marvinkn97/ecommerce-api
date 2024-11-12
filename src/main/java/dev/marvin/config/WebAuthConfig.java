@@ -1,6 +1,7 @@
 package dev.marvin.config;
 
-import dev.marvin.filter.JwtAuthenticationEntryPoint;
+import dev.marvin.filter.CustomAccessDeniedHandler;
+import dev.marvin.filter.CustomAuthenticationEntryPoint;
 import dev.marvin.filter.JwtValidationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +30,9 @@ public class WebAuthConfig {
     private final UserDetailsService userDetailsService;
     private final CorsConfigurationSource corsConfigurationSource;
     private final JwtValidationFilter jwtValidationFilter;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -37,11 +40,20 @@ public class WebAuthConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(c -> {
-                    c.requestMatchers("api/v1/auth/**").permitAll();
+                    c.requestMatchers("api/v1/auth/**",
+                            "/v3/api-docs/**",       // Swagger 3.0 API docs
+                            "/swagger-ui/**",         // Swagger UI
+                            "/swagger-resources/**",  // Swagger resources
+                            "/webjars/**",            // Webjars (Swagger's static content)
+                            "/v2/api-docs/**").permitAll();
                     c.anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(c -> c.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .exceptionHandling(c -> {
+                    c.authenticationEntryPoint(customAuthenticationEntryPoint);
+                    c.accessDeniedHandler(customAccessDeniedHandler);
+                })
+
                 .build();
     }
 
