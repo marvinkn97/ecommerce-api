@@ -31,9 +31,11 @@ public class JwtUtils {
         String mobile = userPrincipal.getUsername();
 
         String role = userPrincipal.userEntity().getRoleEnum().name();
+        Integer userId = userPrincipal.userEntity().getId();
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
+        claims.put("userId", userId);
 
         Date date = new Date(System.currentTimeMillis());
         log.info("iat: {}", date);
@@ -47,7 +49,7 @@ public class JwtUtils {
                 .setIssuer(ISSUER)
                 .setExpiration(expirationDate)
                 .addClaims(claims)
-                .signWith(SECRET_KEY)
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
 

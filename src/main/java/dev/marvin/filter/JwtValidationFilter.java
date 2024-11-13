@@ -31,7 +31,6 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         String token = jwtUtils.getTokenFromHeader(request);
 
         if (!StringUtils.hasText(token)) {
-            log.info("No token present...moving on to the next filter in chain ");
             filterChain.doFilter(request, response);
             return;
         }
@@ -41,13 +40,9 @@ public class JwtValidationFilter extends OncePerRequestFilter {
             log.info("claims: {}", claims);
 
             String mobile = claims.get("sub").toString();
-            log.info("subject: {}", mobile);
-
             String role = claims.get("role").toString();
-            log.info("role: {}", role);
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(mobile, null, List.of(new SimpleGrantedAuthority(role)));
-
             usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
             log.info("usernamePasswordAuthenticationToken: {}", usernamePasswordAuthenticationToken);
 

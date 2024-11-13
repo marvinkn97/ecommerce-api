@@ -27,7 +27,7 @@ public class CategoryController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Create Category", description = "Creates a new category. Requires 'ADMIN' role.", method = "POST")
+    @Operation(summary = "Create Category", description = "Creates a new category. Requires ADMIN role.", method = "POST")
     @ApiResponses({@ApiResponse(responseCode = "201", description = "Category added successfully", content = @Content(schema = @Schema(implementation = ResponseDto.class))), @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = ResponseDto.class))), @ApiResponse(responseCode = "500", description = "Internal server error when adding category", content = @Content(schema = @Schema(implementation = ResponseDto.class)))})
     public ResponseEntity<ResponseDto<String>> add(@Valid @RequestBody CategoryRequest categoryRequest) {
         log.info("Inside add method of CategoryController");
@@ -36,15 +36,15 @@ public class CategoryController {
 
     @GetMapping
     @Operation(summary = "Fetch All Categories", description = "Retrieve a list of all categories available", method = "GET")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully retrieved list of categories"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while fetching categories")})
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Successfully retrieved list of categories"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while fetching categories")})
     public ResponseEntity<ResponseDto<Object>> getAll() {
         log.info("Inside getAll method of CategoryController");
         return ResponseEntity.ok(categoryService.getAll());
     }
 
     @GetMapping("/paginated")
-    @Operation(summary = "Fetch All Categories - Paginated", description = "Retrieve a paginated list of categories", method = "GET")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully retrieved paginated list of categories"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while fetching paginated categories")})
+    @Operation(summary = "Fetch Paginated Categories", description = "Retrieve a paginated list of categories", method = "GET")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Successfully retrieved paginated list of categories"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while fetching paginated categories")})
     public ResponseEntity<ResponseDto<Object>> getAllPaginated() {
         log.info("Inside getAllPaginated method of CategoryController");
         return ResponseEntity.ok(categoryService.getAllPaginated());
@@ -52,27 +52,27 @@ public class CategoryController {
 
     @GetMapping("/{categoryId}")
     @Operation(summary = "Fetch Category by ID", description = "Retrieve details of a specific category.", method = "GET")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully retrieved the specified category"), @ApiResponse(responseCode = "404", description = "Category not found for the provided ID"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while fetching the category")})
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Successfully retrieved the specified category"), @ApiResponse(responseCode = "404", description = "Category not found for the provided ID"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while fetching the category")})
     public ResponseEntity<ResponseDto<Object>> getOne(@PathVariable("categoryId") Integer categoryId) {
         log.info("Inside getOne method of CategoryController");
         return ResponseEntity.ok(categoryService.getOne(categoryId));
     }
 
     @PutMapping("/{categoryId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Category updated successfully"), @ApiResponse(responseCode = "400", description = "Invalid request data provided"), @ApiResponse(responseCode = "404", description = "Category not found for the provided ID"), @ApiResponse(responseCode = "403", description = "User does not have permission to update this category"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while updating category")})
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Update a specific category", description = "Update a specific category. Requires ADMIN role.", method = "PUT")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Category updated successfully"), @ApiResponse(responseCode = "400", description = "Invalid request data provided"), @ApiResponse(responseCode = "404", description = "Category not found for the provided ID"), @ApiResponse(responseCode = "403", description = "User does not have permission to update this category"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while updating category")})
     public ResponseEntity<ResponseDto<String>> update(@PathVariable("categoryId") Integer categoryId, @Valid @RequestBody CategoryRequest categoryRequest) {
         log.info("Inside update method of CategoryController");
         return ResponseEntity.ok(categoryService.update(categoryId, categoryRequest));
     }
 
     @PutMapping("{categoryId}/toggle-status")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(summary = "Toggle Category Status", description = "Activate or deactivate an existing category. Requires ADMIN authority.", method = "PUT")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Category status updated successfully"), @ApiResponse(responseCode = "404", description = "Category not found for the provided ID"), @ApiResponse(responseCode = "403", description = "User does not have permission to modify this category"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while updating category status")})
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Toggle Category Status for specific category", description = "Activate or deactivate an existing category. Requires ADMIN role.", method = "PUT")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Category status updated successfully"), @ApiResponse(responseCode = "404", description = "Category not found for the provided ID"), @ApiResponse(responseCode = "403", description = "User does not have permission to modify this category"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while updating category status")})
     public ResponseEntity<ResponseDto<String>> toggleStatus(@PathVariable("categoryId") Integer categoryId) {
-        log.info("Inside delete method of CategoryController");
+        log.info("Inside toggleStatus method of CategoryController");
         return ResponseEntity.ok(categoryService.toggleStatus(categoryId));
     }
-
 }

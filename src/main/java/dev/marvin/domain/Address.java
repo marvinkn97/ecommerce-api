@@ -2,21 +2,30 @@ package dev.marvin.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "tbl_addresses")
+@Table(name = "t_addresses")
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
-public class Address extends BaseEntity {
+public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String streetName;
-    private String buildingName;
-    private String state;
-    private String country;
-    private String pinCode;
+
+    private String county;
+    private String town;
+    private String street;
+    private String building;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

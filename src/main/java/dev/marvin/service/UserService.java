@@ -1,5 +1,6 @@
 package dev.marvin.service;
 
+import dev.marvin.dto.PasswordChangeRequest;
 import dev.marvin.dto.PasswordCreationRequest;
 import dev.marvin.dto.ResponseDto;
 import dev.marvin.dto.UserProfileRequest;
@@ -12,5 +13,7 @@ public interface UserService {
     Boolean isUserRegistered(String mobileNumber);
 
     void completeUserProfile(UserProfileRequest userProfileRequest);
+
+    void changePassword(String username, PasswordChangeRequest passwordChangeRequest);
 
 }

@@ -6,6 +6,7 @@ import dev.marvin.filter.JwtValidationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -39,21 +40,21 @@ public class WebAuthConfig {
                 .cors(c -> c.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(c -> {
-                    c.requestMatchers("api/v1/auth/**",
-                            "/v3/api-docs/**",       // Swagger 3.0 API docs
-                            "/swagger-ui/**",         // Swagger UI
-                            "/swagger-resources/**",  // Swagger resources
-                            "/webjars/**",            // Webjars (Swagger's static content)
-                            "/v2/api-docs/**").permitAll();
-                    c.anyRequest().authenticated();
-                })
+                .authorizeHttpRequests(c ->
+                        c.requestMatchers(HttpMethod.GET, "api/v1/categories/**").permitAll()
+                                .requestMatchers("/api/v1/auth/**",
+                                        "/v3/api-docs/**",       // Swagger 3.0 API docs
+                                        "/swagger-ui/**",         // Swagger UI
+                                        "/swagger-resources/**",  // Swagger resources
+                                        "/webjars/**",            // Webjars (Swagger's static content)
+                                        "/v2/api-docs/**").permitAll()
+                                .anyRequest().authenticated()
+                )
                 .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(c -> {
                     c.authenticationEntryPoint(customAuthenticationEntryPoint);
                     c.accessDeniedHandler(customAccessDeniedHandler);
                 })
-
                 .build();
     }
 

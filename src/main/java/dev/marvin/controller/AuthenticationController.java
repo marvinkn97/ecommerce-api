@@ -62,7 +62,6 @@ public class AuthenticationController {
     @ApiResponses({@ApiResponse(responseCode = "201", description = "Password created successfully.", content = @Content(schema = @Schema(implementation = ResponseDto.class))), @ApiResponse(responseCode = "400", description = "Invalid password format or request data.", content = @Content(schema = @Schema(implementation = ResponseDto.class))), @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content(schema = @Schema(implementation = ResponseDto.class)))})
     public ResponseEntity<ResponseDto<String>> createPassword(@Valid @RequestBody PasswordCreationRequest passwordCreationRequest) {
         log.info("Inside createPassword method of AuthenticationController");
-        userService.setPasswordForUser(passwordCreationRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.setPasswordForUser(passwordCreationRequest));
     }
 
@@ -81,13 +80,9 @@ public class AuthenticationController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "User successfully authenticated and JWT token generated.", content = @Content(schema = @Schema(implementation = ResponseDto.class))), @ApiResponse(responseCode = "401", description = "Invalid credentials provided.", content = @Content(schema = @Schema(implementation = ResponseDto.class)))})
     public ResponseEntity<ResponseDto<Object>> authenticate(@Valid @RequestBody AuthenticationRequest authenticationRequest) {
         log.info("Inside authenticate method of AuthenticationController");
-
-        // Authenticating user
+        log.info("request: {}", authenticationRequest);
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.mobile(), authenticationRequest.password()));
-
-        // Generating JWT token
         String token = jwtUtils.generateToken(authentication);
-
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), new AuthenticationResponse(token)));
     }
 }

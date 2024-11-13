@@ -3,6 +3,7 @@ package dev.marvin.serviceImpl;
 import dev.marvin.constants.MessageConstants;
 import dev.marvin.domain.RoleEnum;
 import dev.marvin.domain.UserEntity;
+import dev.marvin.dto.PasswordChangeRequest;
 import dev.marvin.dto.PasswordCreationRequest;
 import dev.marvin.dto.ResponseDto;
 import dev.marvin.dto.UserProfileRequest;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,5 +104,43 @@ public class UserServiceImpl implements UserService {
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
 
+    }
+
+    @Override
+    public void changePassword(String username, PasswordChangeRequest passwordChangeRequest) {
+        log.info("Inside changePassword method of UserServiceImpl ");
+        try {
+            if (!passwordChangeRequest.isNewPasswordMatching()) {
+                log.warn("New password and confirmation do not match for user with mobile number: {}", username);
+                throw new RequestValidationException("new password and confirm password don't match");
+            }
+
+            if (!passwordChangeRequest.isNewPasswordSameAsOld()) {
+                throw new RequestValidationException("New password cannot be the same as the old password.");
+            }
+
+
+            UserEntity userEntity = userRepository.findByMobile(username)
+                    .orElseThrow(() -> {
+                        log.error("User with mobile number [{}] not found", username);
+                        return new UsernameNotFoundException("User with given mobile number [%s] not found".formatted(username));
+                    });
+
+            if (!passwordEncoder.matches(passwordChangeRequest.previousPassword(), userEntity.getPassword())) {
+                log.warn("Previous password does not match stored password for user with mobile number: {}", username);
+                throw new RequestValidationException("previous password does not match stored password");
+            }
+
+            userEntity.setPassword(passwordEncoder.encode(passwordChangeRequest.newPassword()));
+            userRepository.save(userEntity);
+            log.info("Password successfully changed for user with mobile number: {}", username);
+        } catch (ResourceNotFoundException | RequestValidationException e) {
+            log.error("Error in changePassword: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error occurred in changePassword method of UserServiceImpl: {}", e.getMessage(), e);
+            throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
+
+        }
     }
 }

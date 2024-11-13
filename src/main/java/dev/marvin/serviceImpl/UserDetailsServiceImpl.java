@@ -15,11 +15,17 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
+
     @Override
     public UserDetails loadUserByUsername(String mobile) throws UsernameNotFoundException {
         log.info("Inside loadUserByUsername method of UserDetailsServiceImpl");
-         UserEntity userEntity = userRepository.findByMobile(mobile)
-                .orElseThrow(()-> new UsernameNotFoundException("User with given mobile number [%s] not found".formatted(mobile)));
-         return new UserPrincipal(userEntity);
+        log.info("Looking for user with mobile number: {}", mobile);
+        UserEntity userEntity = userRepository.findByMobile(mobile)
+                .orElseThrow(() -> {
+                    log.error("User with mobile number [{}] not found", mobile);
+                    return new UsernameNotFoundException("User with given mobile number [%s] not found".formatted(mobile));
+                });
+        log.info("User found: {}", userEntity);
+        return new UserPrincipal(userEntity);
     }
 }
