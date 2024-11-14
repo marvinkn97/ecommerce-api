@@ -27,14 +27,12 @@ public class Product {
     private String productName;
 
     private BigDecimal productPrice;
-    private BigDecimal discountPrice;
 
-    @Transient
-    private BigDecimal specialPrice;
+    private BigDecimal discountPercentage;
 
     private String productDescription;
+
     private Integer productQuantity;
-    private byte[] imageBytes;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
