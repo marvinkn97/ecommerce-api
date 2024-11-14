@@ -4,6 +4,10 @@ import dev.marvin.dto.PasswordChangeRequest;
 import dev.marvin.dto.ResponseDto;
 import dev.marvin.dto.UserProfileUpdateRequest;
 import dev.marvin.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +36,17 @@ public class UserController {
 
     @PutMapping("/change-password")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ResponseDto<String>> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest, Principal principal){
+    @Operation(
+            summary = "Change user password",
+            description = "Allows a user to change their password by providing the previous and new passwords."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password changed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request or password mismatch"),
+            @ApiResponse(responseCode = "403", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<ResponseDto<String>> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest, @Parameter(hidden = true) Principal principal) {
         log.info("Inside changePassword method of UserController");
         userService.changePassword(principal, passwordChangeRequest);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Password changed successfully"));
@@ -40,7 +54,17 @@ public class UserController {
 
     @PutMapping("/update-profile")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ResponseDto<String>> updateProfile(@Valid @RequestBody UserProfileUpdateRequest request, Principal principal){
+    @Operation(
+            summary = "Update user profile",
+            description = "Updates the profile information of the authenticated user."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Profile updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request or no data changes detected"),
+            @ApiResponse(responseCode = "403", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<ResponseDto<String>> updateProfile(@Valid @RequestBody UserProfileUpdateRequest request, @Parameter(hidden = true) Principal principal) {
         log.info("Inside updateProfile method of UserController");
         log.info("request: {}", request);
         userService.updateProfile(principal, request);
