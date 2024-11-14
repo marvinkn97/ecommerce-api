@@ -3,10 +3,7 @@ package dev.marvin.serviceImpl;
 import dev.marvin.constants.MessageConstants;
 import dev.marvin.domain.RoleEnum;
 import dev.marvin.domain.UserEntity;
-import dev.marvin.dto.PasswordChangeRequest;
-import dev.marvin.dto.PasswordCreationRequest;
-import dev.marvin.dto.ResponseDto;
-import dev.marvin.dto.UserProfileRequest;
+import dev.marvin.dto.*;
 import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.exception.RequestValidationException;
 import dev.marvin.exception.ResourceNotFoundException;
@@ -21,6 +18,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+
+import java.security.Principal;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -107,9 +109,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(String username, PasswordChangeRequest passwordChangeRequest) {
+    public void changePassword(Principal principal, PasswordChangeRequest passwordChangeRequest) {
         log.info("Inside changePassword method of UserServiceImpl ");
         try {
+
+            final String username = principal.getName();
+
+            if (!StringUtils.hasText(username) && ObjectUtils.isEmpty(passwordChangeRequest)) {
+                return;
+            }
+
             if (!passwordChangeRequest.isNewPasswordMatching()) {
                 log.warn("New password and confirmation do not match for user with mobile number: {}", username);
                 throw new RequestValidationException("new password and confirm password don't match");
@@ -141,6 +150,47 @@ public class UserServiceImpl implements UserService {
             log.error("Unexpected error occurred in changePassword method of UserServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
 
+        }
+    }
+
+    @Override
+    public void updateProfile(Principal principal, UserProfileUpdateRequest userProfileUpdateRequest) {
+        log.info("Inside updateProfile method of UserServiceImpl ");
+        try {
+            final String username = principal.getName();
+
+            if (!StringUtils.hasText(username) && ObjectUtils.isEmpty(userProfileUpdateRequest)) {
+                return;
+            }
+
+            UserEntity userEntity = userRepository.findByMobile(username)
+                    .orElseThrow(() -> {
+                        log.error("User with mobile number [{}] not found", username);
+                        return new UsernameNotFoundException("User with given mobile number [%s] not found".formatted(username));
+                    });
+
+            boolean changes = false;
+            String name = userProfileUpdateRequest.name();
+
+            if (StringUtils.hasText(name) && !Objects.equals(userEntity.getFullName(), name)) {
+                userEntity.setFullName(name);
+                changes = true;
+            }
+
+            if (!changes) {
+                log.info("No changes detected for user with mobile number: {}", username);
+                throw new RequestValidationException("no data changes detected");
+            }
+
+            userRepository.save(userEntity);
+            log.info("Profile successfully updated for user with mobile number: {}", username);
+
+        } catch (ResourceNotFoundException | RequestValidationException e) {
+            log.error("Error in changePassword: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error occurred in updateProfile method of UserServiceImpl: {}", e.getMessage(), e);
+            throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
     }
 }

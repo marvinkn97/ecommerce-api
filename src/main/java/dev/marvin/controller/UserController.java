@@ -2,7 +2,7 @@ package dev.marvin.controller;
 
 import dev.marvin.dto.PasswordChangeRequest;
 import dev.marvin.dto.ResponseDto;
-import dev.marvin.dto.UserProfileRequest;
+import dev.marvin.dto.UserProfileUpdateRequest;
 import dev.marvin.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -34,15 +34,16 @@ public class UserController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ResponseDto<String>> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest, Principal principal){
         log.info("Inside changePassword method of UserController");
-        log.info("principal: {}", principal);
-        userService.changePassword(principal.getName(), passwordChangeRequest);
+        userService.changePassword(principal, passwordChangeRequest);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Password changed successfully"));
     }
 
     @PutMapping("/update-profile")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ResponseDto<String>> updateProfile(Principal principal, UserProfileRequest userProfileRequest){
-        return null;
+    public ResponseEntity<ResponseDto<String>> updateProfile(@Valid @RequestBody UserProfileUpdateRequest request, Principal principal){
+        log.info("Inside updateProfile method of UserController");
+        log.info("request: {}", request);
+        userService.updateProfile(principal, request);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Profile updated successfully"));
     }
-
 }
