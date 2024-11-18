@@ -1,4 +1,6 @@
 package dev.marvin.dto;
 
-public record ProductResponse() {
+public record ProductResponse(
+        Integer productId
+) {
 }

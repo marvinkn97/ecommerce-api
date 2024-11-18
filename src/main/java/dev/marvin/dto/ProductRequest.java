@@ -1,32 +1,63 @@
 package dev.marvin.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 
-@Schema(name = "Product Request", description = "Product Request Structure")
+@Schema(title = "Product Request", name = "ProductRequest", description = "Data Transfer Object (DTO) for creating or updating a product")
 public record ProductRequest(
 
-        @SchemaProperty(name = "Category ID")
-        @NotNull(message = "Category ID must not be null")
+        @Schema(
+                description = "ID of the category to which the product belongs",
+                example = "1",
+                requiredMode = Schema.RequiredMode.REQUIRED
+        )
+        @NotNull(message = "Category ID is required")
         @Positive(message = "Category ID must be a positive number")
         Integer categoryId,
 
-        @SchemaProperty(name = "Product Name")
-        @NotBlank(message = "Product Name must not be blank")
-        @Size(min = 3, message = "Product Name must have at least 3 characters")
+        @Schema(
+                description = "Name of the product",
+                example = "Wireless Mouse",
+                requiredMode = Schema.RequiredMode.REQUIRED
+        )
+        @NotBlank(message = "Product Name is required")
+        @Size(min = 3, max = 100, message = "Product Name must be between 3 and 100 characters")
         String productName,
 
-        @SchemaProperty(name = "Product Price")
-        @NotNull(message = "Product Price must not be null")
-        @PositiveOrZero(message = "Product Price must be a positive number")
+        @Schema(
+                description = "Price of the product",
+                example = "19.99",
+                requiredMode = Schema.RequiredMode.REQUIRED
+        )
+        @NotNull(message = "Product Price is required")
+        @Positive(message = "Product Price must be a positive number")
         BigDecimal productPrice,
 
+        @Schema(
+                description = "Discounted price of the product (if applicable)",
+                example = "15.99",
+                requiredMode = Schema.RequiredMode.REQUIRED
+        )
+        @PositiveOrZero(message = "Discount Price must be zero or a positive number")
         BigDecimal discountPrice,
-        BigDecimal specialPrice,
+
+        @Schema(
+                description = "Description of the product",
+                example = "A high-quality wireless mouse with ergonomic design.",
+                requiredMode = Schema.RequiredMode.REQUIRED
+        )
+        @Size(max = 500, message = "Product Description must not exceed 500 characters")
         String productDescription,
-        String encodedProductImage
+
+        @Schema(
+                description = "Available quantity of the product",
+                example = "10",
+                requiredMode = Schema.RequiredMode.REQUIRED
+        )
+        @NotNull(message = "Product Quantity is required")
+        @Positive(message = "Product Quantity must be a positive number")
+        Integer productQuantity
 ) {
 }

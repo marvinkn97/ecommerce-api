@@ -21,17 +21,11 @@ public class Product {
     private Integer id;
 
     @Column(unique = true)
-    private String productId;
-
-    @Column(unique = true)
     private String productName;
 
     private BigDecimal productPrice;
-
-    private BigDecimal discountPercentage;
-
+    private BigDecimal discountPrice;
     private String productDescription;
-
     private Integer productQuantity;
 
     @CreationTimestamp
