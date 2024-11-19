@@ -34,6 +34,8 @@ public class Product {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    private Boolean isDeleted = Boolean.FALSE;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;

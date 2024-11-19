@@ -73,7 +73,7 @@ public class CategoryServiceImpl implements CategoryService {
     public ResponseDto<Object> getAllPaginated() {
         log.info("Inside getAllPaginated method of CategoryServiceImpl");
         try {
-            Pageable pageable = PageRequest.of(PaginationConstants.PAGE_NUMBER, PaginationConstants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, PaginationConstants.SORT_COLUMN));
+            Pageable pageable = PageRequest.of(PaginationConstants.PAGE_NUMBER, PaginationConstants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, PaginationConstants.CATEGORY_SORT_COLUMN));
             Page<Category> categoryPage = categoryRepository.getCategories(pageable);
             List<CategoryResponse> categoryResponseList = categoryPage.getContent().stream().map(Mapper::mapToDto)
                     .toList();

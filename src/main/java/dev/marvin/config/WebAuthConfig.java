@@ -41,7 +41,7 @@ public class WebAuthConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(c ->
-                        c.requestMatchers(HttpMethod.GET, "api/v1/categories/**").permitAll()
+                        c.requestMatchers(HttpMethod.GET, "api/v1/categories/**", "api/v1/products/**").permitAll()
                                 .requestMatchers("/api/v1/auth/**",
                                         "/v3/api-docs/**",       // Swagger 3.0 API docs
                                         "/swagger-ui/**",         // Swagger UI

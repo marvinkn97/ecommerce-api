@@ -2,6 +2,7 @@ package dev.marvin.utils;
 
 
 import dev.marvin.domain.UserPrincipal;
+import dev.marvin.exception.RequestValidationException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -67,16 +68,9 @@ public class JwtUtils {
         try {
             Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
             return claimsJws.getBody().getIssuer().equals(ISSUER);
-
-        } catch (ExpiredJwtException e) {
-            log.error("Token has expired: {}", e.getMessage());
-            return false;
-        } catch (MalformedJwtException e) {
-            log.error("Token is malformed: {}", e.getMessage());
-            return false;
         } catch (JwtException e) {
             log.error("JWT validation error: {}", e.getMessage(), e);
-            return false;
+            throw new RequestValidationException("Token is invalid", e);
         }
     }
 

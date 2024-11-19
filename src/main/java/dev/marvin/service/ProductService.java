@@ -2,6 +2,7 @@ package dev.marvin.service;
 
 import dev.marvin.dto.ProductRequest;
 import dev.marvin.dto.ProductResponse;
+import dev.marvin.dto.ProductUpdateRequest;
 import dev.marvin.dto.ResponseDto;
 import org.springframework.data.domain.Page;
 
@@ -14,13 +15,11 @@ public interface ProductService {
 
     Page<ProductResponse> getAllPaginated();
 
-    Page<ProductResponse> getAll(Integer categoryId);
+    Page<ProductResponse> getAllByCategory(Integer categoryId);
 
     ProductResponse getOne(Integer productId);
 
-    ProductResponse getOne(String productName);
+    void update(Integer productId, ProductUpdateRequest updateRequest);
 
-    void update(Integer productId, ProductRequest productRequest);
-
-    void delete(Integer productId);
+    void toggleStatus(Integer productId);
 }

@@ -5,6 +5,8 @@ import dev.marvin.domain.Product;
 import dev.marvin.dto.CategoryResponse;
 import dev.marvin.dto.ProductResponse;
 
+import java.math.BigDecimal;
+
 public class Mapper {
     private Mapper() {
     }
@@ -14,6 +16,7 @@ public class Mapper {
     }
 
     public static ProductResponse mapToDto(Product product){
-        return null;
+        BigDecimal specialPrice = product.getProductPrice().subtract(product.getDiscountPrice());
+        return new ProductResponse(product.getId(), product.getProductName(), product.getProductPrice(), specialPrice, product.getProductQuantity(), product.getProductDescription());
     }
 }
