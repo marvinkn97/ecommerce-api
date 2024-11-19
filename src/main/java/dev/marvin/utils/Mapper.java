@@ -1,4 +1,4 @@
-package dev.marvin.mapper;
+package dev.marvin.utils;
 
 import dev.marvin.domain.Category;
 import dev.marvin.domain.Product;

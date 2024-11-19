@@ -25,12 +25,11 @@ public class Cart {
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "cart")
     Collection<CartItem> cartItems = new HashSet<>();
 
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
-
 }

@@ -10,7 +10,7 @@ import dev.marvin.dto.ResponseDto;
 import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.exception.ResourceNotFoundException;
 import dev.marvin.exception.ServiceException;
-import dev.marvin.mapper.Mapper;
+import dev.marvin.utils.Mapper;
 import dev.marvin.repository.CategoryRepository;
 import dev.marvin.service.CategoryService;
 import lombok.RequiredArgsConstructor;
