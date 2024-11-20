@@ -1,5 +1,6 @@
 package dev.marvin.controller;
 
+import dev.marvin.domain.UserPrincipal;
 import dev.marvin.dto.PasswordChangeRequest;
 import dev.marvin.dto.ResponseDto;
 import dev.marvin.dto.UserProfileUpdateRequest;
@@ -34,7 +35,7 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(
             summary = "Change user password",
             description = "Allows a user to change their password by providing the previous and new passwords."
@@ -48,12 +49,13 @@ public class UserController {
     public ResponseEntity<ResponseDto<String>> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest) {
         log.info("Inside changePassword method of UserController");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        userService.changePassword(authentication, passwordChangeRequest);
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        userService.changePassword(userPrincipal.userEntity(), passwordChangeRequest);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Password changed successfully"));
     }
 
     @PutMapping("/update-profile")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(
             summary = "Update user profile",
             description = "Updates the profile information of the authenticated user."
@@ -68,7 +70,8 @@ public class UserController {
         log.info("Inside updateProfile method of UserController");
         log.info("request: {}", request);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        userService.updateProfile(authentication, request);
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        userService.updateProfile(userPrincipal.userEntity(), request);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Profile updated successfully"));
     }
 }

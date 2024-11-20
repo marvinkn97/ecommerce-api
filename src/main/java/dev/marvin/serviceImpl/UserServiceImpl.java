@@ -14,14 +14,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import java.security.Principal;
 import java.util.Objects;
 
 @Service
@@ -70,7 +68,6 @@ public class UserServiceImpl implements UserService {
             return new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), "Password set successfully for user with mobile %s".formatted(passwordCreationRequest.mobile()));
 
         } catch (ResourceNotFoundException | RequestValidationException e) {
-            log.error("Error in setPasswordForUser: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error occurred in setPasswordForUser method of UserServiceImpl: {}", e.getMessage(), e);
@@ -99,7 +96,6 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
 
         } catch (ResourceNotFoundException e) {
-            log.error("Error in setPasswordForUser: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error occurred in completeUserProfile method of UserServiceImpl: {}", e.getMessage(), e);
@@ -109,18 +105,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(Principal principal, PasswordChangeRequest passwordChangeRequest) {
+    public void changePassword(UserEntity userEntity, PasswordChangeRequest passwordChangeRequest) {
         log.info("Inside changePassword method of UserServiceImpl ");
         try {
 
-            final String username = principal.getName();
-
-            if (!StringUtils.hasText(username) && ObjectUtils.isEmpty(passwordChangeRequest)) {
+            if (ObjectUtils.isEmpty(userEntity) && ObjectUtils.isEmpty(passwordChangeRequest)) {
                 return;
             }
 
             if (!passwordChangeRequest.isNewPasswordMatching()) {
-                log.warn("New password and confirmation do not match for user with mobile number: {}", username);
+                log.warn("New password and confirmation do not match");
                 throw new RequestValidationException("new password and confirm password don't match");
             }
 
@@ -128,23 +122,15 @@ public class UserServiceImpl implements UserService {
                 throw new RequestValidationException("New password cannot be the same as the old password.");
             }
 
-
-            UserEntity userEntity = userRepository.findByMobile(username)
-                    .orElseThrow(() -> {
-                        log.error("User with mobile number [{}] not found", username);
-                        return new UsernameNotFoundException("User with given mobile number [%s] not found".formatted(username));
-                    });
-
             if (!passwordEncoder.matches(passwordChangeRequest.previousPassword(), userEntity.getPassword())) {
-                log.warn("Previous password does not match stored password for user with mobile number: {}", username);
+                log.warn("Previous password does not match stored password for user");
                 throw new RequestValidationException("previous password does not match stored password");
             }
 
             userEntity.setPassword(passwordEncoder.encode(passwordChangeRequest.newPassword()));
             userRepository.save(userEntity);
-            log.info("Password successfully changed for user with mobile number: {}", username);
+            log.info("Password successfully changed");
         } catch (ResourceNotFoundException | RequestValidationException e) {
-            log.error("Error in changePassword: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error occurred in changePassword method of UserServiceImpl: {}", e.getMessage(), e);
@@ -154,20 +140,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateProfile(Principal principal, UserProfileUpdateRequest userProfileUpdateRequest) {
+    public void updateProfile(UserEntity userEntity, UserProfileUpdateRequest userProfileUpdateRequest) {
         log.info("Inside updateProfile method of UserServiceImpl ");
         try {
-            final String username = principal.getName();
-
-            if (!StringUtils.hasText(username) && ObjectUtils.isEmpty(userProfileUpdateRequest)) {
+            if (ObjectUtils.isEmpty(userEntity) && ObjectUtils.isEmpty(userProfileUpdateRequest)) {
                 return;
             }
-
-            UserEntity userEntity = userRepository.findByMobile(username)
-                    .orElseThrow(() -> {
-                        log.error("User with mobile number [{}] not found", username);
-                        return new UsernameNotFoundException("User with given mobile number [%s] not found".formatted(username));
-                    });
 
             boolean changes = false;
             String name = userProfileUpdateRequest.name();
@@ -178,15 +156,14 @@ public class UserServiceImpl implements UserService {
             }
 
             if (!changes) {
-                log.info("No changes detected for user with mobile number: {}", username);
+                log.info("No changes detected for user");
                 throw new RequestValidationException("no data changes detected");
             }
 
             userRepository.save(userEntity);
-            log.info("Profile successfully updated for user with mobile number: {}", username);
+            log.info("Profile successfully updated for user");
 
         } catch (ResourceNotFoundException | RequestValidationException e) {
-            log.error("Error in changePassword: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error occurred in updateProfile method of UserServiceImpl: {}", e.getMessage(), e);

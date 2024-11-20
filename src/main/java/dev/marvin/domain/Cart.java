@@ -25,7 +25,7 @@ public class Cart {
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "cart")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "cart",cascade = CascadeType.ALL)
     Collection<CartItem> cartItems = new HashSet<>();
 
     private BigDecimal totalAmount = BigDecimal.ZERO;

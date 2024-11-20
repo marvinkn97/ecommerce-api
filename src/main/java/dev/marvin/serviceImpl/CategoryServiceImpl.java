@@ -94,7 +94,6 @@ public class CategoryServiceImpl implements CategoryService {
                     .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
             return new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), categoryResponse);
         } catch (ResourceNotFoundException e) {
-            log.error("Category not found exception: {}", e.getMessage(), e);
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error occurred in getOne method of CategoryServiceImpl: {}", e.getMessage(), e);
@@ -115,7 +114,6 @@ public class CategoryServiceImpl implements CategoryService {
             categoryRepository.save(category);
             return new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Category with Id %s updated successfully".formatted(category.getId()));
         } catch (ResourceNotFoundException e) {
-            log.error("Category not found exception: {}", e.getMessage(), e);
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error occurred in update method of CategoryServiceImpl: {}", e.getMessage(), e);
@@ -135,7 +133,6 @@ public class CategoryServiceImpl implements CategoryService {
             categoryRepository.save(category);
             return new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Category status with Id %s updated successfully".formatted(category.getId()));
         } catch (ResourceNotFoundException e) {
-            log.error("Category not found: {}", e.getMessage(), e);
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error occurred in toggleStatus method of CategoryServiceImpl: {}", e.getMessage(), e);

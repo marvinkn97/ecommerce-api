@@ -1,8 +1,7 @@
 package dev.marvin.service;
 
+import dev.marvin.domain.UserEntity;
 import dev.marvin.dto.*;
-
-import java.security.Principal;
 
 public interface UserService {
     void registerMobile(String mobileNumber);
@@ -13,8 +12,8 @@ public interface UserService {
 
     void completeUserProfile(UserProfileRequest userProfileRequest);
 
-    void changePassword(Principal principal, PasswordChangeRequest passwordChangeRequest);
+    void changePassword(UserEntity userEntity, PasswordChangeRequest passwordChangeRequest);
 
-    void updateProfile(Principal principal, UserProfileUpdateRequest userProfileUpdateRequest);
+    void updateProfile(UserEntity userEntity, UserProfileUpdateRequest userProfileUpdateRequest);
 
 }

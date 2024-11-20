@@ -115,7 +115,6 @@ public class ProductServiceImpl implements ProductService {
             Product product = productRepository.getProductById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with given id [%s] not found".formatted(productId)));
             return Mapper.mapToDto(product);
         } catch (ResourceNotFoundException e) {
-            log.error("Product not found exception: {}", e.getMessage(), e);
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error occurred in getOne method of ProductServiceImpl: {}", e.getMessage(), e);
@@ -174,11 +173,7 @@ public class ProductServiceImpl implements ProductService {
             productRepository.save(product);
             log.info("Product with ID [{}] successfully updated", productId);
 
-        } catch (ResourceNotFoundException e) {
-            log.error("Product not found: {}", e.getMessage());
-            throw e;
-        } catch (RequestValidationException e) {
-            log.error("Validation error: {}", e.getMessage());
+        } catch (ResourceNotFoundException | RequestValidationException e) {
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error occurred in update method of ProductServiceImpl: {}", e.getMessage(), e);
@@ -198,13 +193,11 @@ public class ProductServiceImpl implements ProductService {
             log.info("Product with ID [{}] successfully updated", productId);
 
         } catch (ResourceNotFoundException e) {
-            log.error("Product not found: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error occurred in toggleStatus method of ProductServiceImpl: {}", e.getMessage(), e);
             throw new ServiceException(MessageConstants.UNEXPECTED_ERROR, e);
         }
-
     }
 
 }
