@@ -1,5 +1,6 @@
 package dev.marvin.controller;
 
+import dev.marvin.constants.MessageConstants;
 import dev.marvin.domain.UserPrincipal;
 import dev.marvin.dto.PasswordChangeRequest;
 import dev.marvin.dto.ResponseDto;
@@ -44,14 +45,14 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Password changed successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request or password mismatch"),
             @ApiResponse(responseCode = "403", description = "Unauthorized"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")
     })
     public ResponseEntity<ResponseDto<String>> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest) {
         log.info("Inside changePassword method of UserController");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         userService.changePassword(userPrincipal.userEntity(), passwordChangeRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Password changed successfully"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), MessageConstants.PASSWORD_CHANGED));
     }
 
     @PutMapping("/update-profile")
@@ -64,14 +65,13 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Profile updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request or no data changes detected"),
             @ApiResponse(responseCode = "403", description = "Unauthorized"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")
     })
     public ResponseEntity<ResponseDto<String>> updateProfile(@Valid @RequestBody UserProfileUpdateRequest request) {
         log.info("Inside updateProfile method of UserController");
-        log.info("request: {}", request);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         userService.updateProfile(userPrincipal.userEntity(), request);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Profile updated successfully"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), MessageConstants.PROFILE_UPDATED));
     }
 }

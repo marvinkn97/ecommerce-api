@@ -1,5 +1,6 @@
 package dev.marvin.controller;
 
+import dev.marvin.constants.MessageConstants;
 import dev.marvin.domain.UserPrincipal;
 import dev.marvin.dto.AddToCartRequest;
 import dev.marvin.dto.ResponseDto;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -41,7 +43,7 @@ public class CartController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         cartService.addProductToCart(addToCartRequest, userPrincipal.userEntity());
-        return null;
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), MessageConstants.ADD_PRODUCT_TO_CART));
 
     }
 }

@@ -3,13 +3,12 @@ package dev.marvin.service;
 import dev.marvin.dto.ProductRequest;
 import dev.marvin.dto.ProductResponse;
 import dev.marvin.dto.ProductUpdateRequest;
-import dev.marvin.dto.ResponseDto;
 import org.springframework.data.domain.Page;
 
 import java.util.Collection;
 
 public interface ProductService {
-    ResponseDto<String> add(ProductRequest productRequest);
+    void add(ProductRequest productRequest);
 
     Collection<ProductResponse> getAll();
 

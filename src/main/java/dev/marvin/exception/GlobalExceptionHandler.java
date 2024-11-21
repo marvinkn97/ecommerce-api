@@ -1,5 +1,7 @@
 package dev.marvin.exception;
 
+import dev.marvin.constants.MessageConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,25 +21,24 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<Object> handleDuplicateResourceException(DuplicateResourceException e) {
+        log.info("DuplicateResourceException: {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(buildErrorResponseObject(HttpStatus.CONFLICT, e.getMessage()));
-    }
-
-    @ExceptionHandler(ServiceException.class)
-    public ResponseEntity<Object> handleServiceException(ServiceException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(buildErrorResponseObject(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException e) {
+        log.info("ResourceNotFoundException: {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(buildErrorResponseObject(HttpStatus.NOT_FOUND, e.getMessage()));
     }
 
     @ExceptionHandler(RequestValidationException.class)
     public ResponseEntity<Object> handleRequestValidationException(RequestValidationException e) {
+        log.info("RequestValidationException: {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(buildErrorResponseObject(HttpStatus.BAD_REQUEST, e.getMessage()));
     }
 
@@ -51,6 +52,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ));
         ErrorResponse errorResponse = buildErrorResponseObject(HttpStatus.BAD_REQUEST, errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleServiceException(Exception e) {
+        log.info("Exception: {}", e.getMessage(), e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(buildErrorResponseObject(HttpStatus.INTERNAL_SERVER_ERROR, MessageConstants.UNEXPECTED_ERROR));
     }
 
     private ErrorResponse buildErrorResponseObject(HttpStatus status, Object message) {

@@ -1,19 +1,22 @@
 package dev.marvin.service;
 
 import dev.marvin.dto.CategoryRequest;
-import dev.marvin.dto.ResponseDto;
+import dev.marvin.dto.CategoryResponse;
+import org.springframework.data.domain.Page;
+
+import java.util.Collection;
 
 public interface CategoryService {
-    ResponseDto<String> add(CategoryRequest categoryRequest);
+    void add(CategoryRequest categoryRequest);
 
-    ResponseDto<Object> getAll();
+    Collection<CategoryResponse> getAll();
 
-    ResponseDto<Object> getAllPaginated();
+    Page<CategoryResponse> getAllPaginated();
 
-    ResponseDto<Object> getOne(Integer categoryId);
+    CategoryResponse getOne(Integer categoryId);
 
-    ResponseDto<String> update(Integer categoryId, CategoryRequest categoryRequest);
+    void update(Integer categoryId, CategoryRequest categoryRequest);
 
-    ResponseDto<String> toggleStatus(Integer categoryId);
+    void toggleStatus(Integer categoryId);
 
 }

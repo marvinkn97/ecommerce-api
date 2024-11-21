@@ -1,12 +1,11 @@
 package dev.marvin.controller;
 
+import dev.marvin.constants.MessageConstants;
 import dev.marvin.dto.ProductRequest;
 import dev.marvin.dto.ProductUpdateRequest;
 import dev.marvin.dto.ResponseDto;
 import dev.marvin.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,16 +28,16 @@ public class ProductController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create Product", description = "Creates a new product. Requires ADMIN role.", method = "POST")
-    @ApiResponses({@ApiResponse(responseCode = "201", description = "Product added successfully", content = @Content(schema = @Schema(implementation = ResponseDto.class))), @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = ResponseDto.class))), @ApiResponse(responseCode = "500", description = "Internal server error when adding product", content = @Content(schema = @Schema(implementation = ResponseDto.class)))})
+    @ApiResponses({@ApiResponse(responseCode = "201", description = "Product added successfully"), @ApiResponse(responseCode = "400", description = "Invalid request"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<String>> add(@Valid @RequestBody ProductRequest productRequest) {
         log.info("Inside add method of ProductController");
-        log.info("request: {}", productRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.add(productRequest));
+        productService.add(productRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), MessageConstants.PRODUCT_CREATED));
     }
 
     @GetMapping
     @Operation(summary = "Fetch All Products", description = "Retrieve a list of all products available", method = "GET")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Successfully retrieved list of products"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while fetching products")})
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Successfully retrieved list of products"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<Object>> getAll() {
         log.info("Inside getAll method of ProductControllerController");
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), productService.getAll()));
@@ -46,7 +45,7 @@ public class ProductController {
 
     @GetMapping("/paginated")
     @Operation(summary = "Fetch Paginated products", description = "Retrieve a paginated list of products", method = "GET")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Successfully retrieved paginated list of products"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while fetching paginated categories")})
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Successfully retrieved paginated list of products"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<Object>> getAllPaginated() {
         log.info("Inside getAllPaginated method of ProductController");
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), productService.getAllPaginated()));
@@ -54,7 +53,7 @@ public class ProductController {
 
     @GetMapping("/{productId}")
     @Operation(summary = "Fetch Product by ID", description = "Retrieve details of a specific product.", method = "GET")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Successfully retrieved the specified product"), @ApiResponse(responseCode = "404", description = "Product not found for the provided ID"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while fetching the product")})
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Successfully retrieved the specified product"), @ApiResponse(responseCode = "404", description = "Product not found for the provided ID"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<Object>> getOne(@PathVariable("productId") Integer productId) {
         log.info("Inside getOne method of ProductController");
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), productService.getOne(productId)));
@@ -63,21 +62,21 @@ public class ProductController {
     @PutMapping("/{productId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update Product Details", description = "Partially update a product by providing one or more fields", method = "PUT")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Product updated successfully"), @ApiResponse(responseCode = "404", description = "Product not found"), @ApiResponse(responseCode = "400", description = "Invalid input provided"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred")})
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Product updated successfully"), @ApiResponse(responseCode = "404", description = "Product not found"), @ApiResponse(responseCode = "400", description = "Invalid input provided"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<String>> update(@PathVariable Integer productId, @Valid @RequestBody ProductUpdateRequest productUpdateRequest) {
         log.info("Inside update method of ProductController");
         productService.update(productId, productUpdateRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Product updated successfully"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), MessageConstants.PRODUCT_UPDATED));
     }
 
     @PutMapping("{productId}/toggle-status")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Toggle Visibility Status for specific product", description = "Activate or deactivate an existing product. Requires ADMIN role.", method = "PUT")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Product visibility status updated successfully"), @ApiResponse(responseCode = "404", description = "Product not found"), @ApiResponse(responseCode = "403", description = "User does not have permission to modify this product"), @ApiResponse(responseCode = "500", description = "Internal server error occurred while updating product status")})
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Product visibility status updated successfully"), @ApiResponse(responseCode = "404", description = "Product not found"), @ApiResponse(responseCode = "403", description = "User does not have permission to modify this product"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<String>> toggleStatus(@PathVariable("productId") Integer productId) {
         log.info("Inside toggleStatus method of ProductController");
         productService.toggleStatus(productId);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), "Product visibility status updated successfully"));
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), MessageConstants.PRODUCT_STATUS_UPDATED));
     }
 
 }
