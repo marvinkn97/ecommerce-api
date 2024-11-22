@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,10 +24,8 @@ public class Cart {
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "cart",cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "cart",cascade = CascadeType.ALL, orphanRemoval = true)
     Collection<CartItem> cartItems = new HashSet<>();
-
-    private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

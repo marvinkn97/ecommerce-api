@@ -4,18 +4,17 @@ import dev.marvin.domain.Cart;
 import dev.marvin.domain.CartItem;
 import dev.marvin.domain.Product;
 import dev.marvin.domain.UserEntity;
-import dev.marvin.dto.AddToCartRequest;
 import dev.marvin.dto.CartResponse;
 import dev.marvin.exception.RequestValidationException;
+import dev.marvin.exception.ResourceNotFoundException;
 import dev.marvin.repository.CartRepository;
 import dev.marvin.service.CartService;
+import dev.marvin.utils.Mapper;
 import dev.marvin.utils.ProductUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +25,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void addProductToCart(AddToCartRequest addToCartRequest, UserEntity userEntity) {
+    public void addProductToCart(Integer productId, UserEntity userEntity) {
         log.info("Inside addProductToCart method of CartServiceImpl");
-        Integer productId = addToCartRequest.productId();
         Integer userId = userEntity.getId();
 
         Product product = productUtils.getProductById(productId);
@@ -43,34 +41,77 @@ public class CartServiceImpl implements CartService {
         cart.setUserEntity(userEntity);
 
         // Check if product already in the cart
-        Optional<CartItem> existingCartItem = cart.getCartItems()
+        cart.getCartItems()
                 .stream()
                 .filter(item -> item.getProduct().getId().equals(product.getId()))
-                .findFirst();
-
-        if (existingCartItem.isPresent()) {
-            // Increment quantity if product exists in the cart
-            CartItem cartItem = existingCartItem.get();
-            cartItem.setQuantity(cartItem.getQuantity() + 1);
-
-        } else {
-            CartItem cartItem = new CartItem();
-            cartItem.setProduct(product);
-            cartItem.setQuantity(1);
-            cartItem.setCart(cart);
-            cart.getCartItems().add(cartItem);
-        }
+                .findFirst()
+                .ifPresentOrElse(
+                        // Increment quantity if product exists
+                        cartItem -> cartItem.setQuantity(cartItem.getQuantity() + 1),
+                        // Otherwise, add new product to cart
+                        () -> {
+                            CartItem newCartItem = new CartItem();
+                            newCartItem.setProduct(product);
+                            newCartItem.setQuantity(1);
+                            newCartItem.setCart(cart);
+                            cart.getCartItems().add(newCartItem);
+                        }
+                );
         cartRepository.save(cart);
         log.info("Product added to cart successfully");
     }
 
     @Override
-    public void updateCartItemQty() {
+    public void reduceCartItemQuantity(Integer productId, UserEntity userEntity) {
+        log.info("Inside reduceCartItemQuantity method of CartServiceImpl");
 
+        // Fetch user's cart
+        Cart cart = cartRepository.findByUserId(userEntity.getId()).orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+
+        // Find the product in the cart
+        CartItem cartItem = cart.getCartItems()
+                .stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found in cart"));
+
+        if (cartItem.getQuantity() <= 1) {
+            log.error("Cannot decrement quantity: Quantity is already 1 or less for product ID {}", productId);
+            throw new RequestValidationException("Cannot decrement quantity further. Please delete the item instead");
+        }
+
+        // Reduce quantity by 1
+        cartItem.setQuantity(cartItem.getQuantity() - 1);
+        cartRepository.save(cart);
+        log.info("Product quantity decremented successfully");
+    }
+
+    @Override
+    @Transactional
+    public void deleteCartItem(Integer productId, UserEntity userEntity) {
+        log.info("Inside reduceCartItemQuantity method of CartServiceImpl");
+
+        // Fetch user's cart
+        Cart cart = cartRepository.findByUserId(userEntity.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user ID: " + userEntity.getId()));
+
+        // Find the product in the cart
+        CartItem cartItem = cart.getCartItems()
+                .stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found in cart"));
+
+        // Remove the cart item
+        cart.getCartItems().remove(cartItem);
+        cartRepository.save(cart);
+        log.info("Product with ID {} removed from cart successfully", productId);
     }
 
     @Override
     public CartResponse getCart(UserEntity userEntity) {
-        return null;
+        log.info("Inside getCart method of CartServiceImpl");
+        Cart cart = cartRepository.findByUserId(userEntity.getId()).orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+        return Mapper.mapToDto(cart);
     }
 }
