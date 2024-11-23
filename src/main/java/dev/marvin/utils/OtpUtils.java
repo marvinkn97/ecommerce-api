@@ -1,11 +1,10 @@
 package dev.marvin.utils;
 
 import dev.marvin.domain.OTP;
-import dev.marvin.dto.PreAuthRequest;
 import dev.marvin.dto.OtpVerificationRequest;
+import dev.marvin.dto.PreAuthRequest;
 import dev.marvin.dto.SmsRequest;
 import dev.marvin.exception.RequestValidationException;
-import dev.marvin.exception.ServiceException;
 import dev.marvin.repository.OtpRepository;
 import dev.marvin.service.SmsService;
 import dev.marvin.service.UserService;
@@ -29,7 +28,6 @@ public class OtpUtils {
     @Transactional
     @Async
     public void generateAndSendOtp(PreAuthRequest preAuthRequest) {
-        try {
             if (preAuthRequest.hasMobile()) {
                 // Generate OTP
                 String otp = generateOtp();
@@ -53,11 +51,6 @@ public class OtpUtils {
                 SmsRequest smsRequest = new SmsRequest(preAuthRequest.mobile(), "TIARACONECT", message);
                 smsService.sendSms(smsRequest);
             }
-
-        } catch (Exception e) {
-            log.error("Error generating or sending OTP", e);
-            throw new ServiceException("Failed to generate or send OTP", e);
-        }
     }
 
     public void verifyOtp(OtpVerificationRequest otpVerificationRequest) {

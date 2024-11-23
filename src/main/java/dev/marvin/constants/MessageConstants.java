@@ -52,6 +52,11 @@ public class MessageConstants {
     public static final String ADD_PRODUCT_TO_CART = "Product added to cart successfully";
     public static final String CART_ITEM_UPDATED = "Item quantity has been updated";
     public static final String CART_ITEM_DELETED = "Item was removed from cart";
-    public static final String PROVIDE_PRODUCT_ID ="The product ID must be provided";
+
+
+    /*
+     * Address
+     * */
+    public static final String ADDRESS_CREATED = "Address added successfully";
 
 }
