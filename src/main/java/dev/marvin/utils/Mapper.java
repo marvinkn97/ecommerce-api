@@ -1,13 +1,7 @@
 package dev.marvin.utils;
 
-import dev.marvin.domain.Cart;
-import dev.marvin.domain.CartItem;
-import dev.marvin.domain.Category;
-import dev.marvin.domain.Product;
-import dev.marvin.dto.CartItemResponse;
-import dev.marvin.dto.CartResponse;
-import dev.marvin.dto.CategoryResponse;
-import dev.marvin.dto.ProductResponse;
+import dev.marvin.domain.*;
+import dev.marvin.dto.*;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -39,5 +33,9 @@ public class Mapper {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return new CartResponse(cart.getUserEntity().getMobileNumber(), cartItems, totalAmount);
+    }
+
+    public static AddressResponse mapToDto(Address address){
+        return new AddressResponse(address.getCounty(), address.getTown(), address.getStreet(), address.getBuilding());
     }
 }

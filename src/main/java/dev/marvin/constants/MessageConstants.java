@@ -58,5 +58,7 @@ public class MessageConstants {
      * Address
      * */
     public static final String ADDRESS_CREATED = "Address added successfully";
+    public static final String ADDRESS_UPDATED = "Address updated successfully";
+    public static final String ADDRESS_DELETED = "Address deleted successfully";
 
 }

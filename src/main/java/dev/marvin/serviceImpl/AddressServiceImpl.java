@@ -4,23 +4,24 @@ import dev.marvin.domain.Address;
 import dev.marvin.domain.UserEntity;
 import dev.marvin.dto.AddressRequest;
 import dev.marvin.dto.AddressResponse;
+import dev.marvin.dto.AddressUpdateRequest;
 import dev.marvin.exception.RequestValidationException;
 import dev.marvin.repository.AddressRepository;
-import dev.marvin.repository.UserRepository;
 import dev.marvin.service.AddressService;
+import dev.marvin.utils.AddressUtils;
+import dev.marvin.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AddressServiceImpl implements AddressService {
-    private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
+    private final AddressUtils addressUtils;
+
     @Override
     public void addAddress(AddressRequest addressRequest, UserEntity userEntity) {
         log.info("Inside addAddress method of AddressServiceImpl");
@@ -29,32 +30,21 @@ public class AddressServiceImpl implements AddressService {
         address.setTown(addressRequest.town());
         address.setStreet(addressRequest.street());
         address.setBuilding(addressRequest.building());
-
-        userEntity.getAddresses().add(address);
-        userRepository.save(userEntity);
+        address.setUserEntity(userEntity);
+        addressRepository.save(address);
         log.info("Address added successfully");
-
     }
 
     @Override
-    public Collection<AddressResponse> getAll() {
-        return null;
+    public AddressResponse getOne(UserEntity userEntity) {
+        Address address = addressUtils.getAddressByUserId(userEntity.getId());
+        return Mapper.mapToDto(address);
     }
 
     @Override
-    public Page<AddressResponse> getAllPaginated() {
-        return null;
-    }
-
-    @Override
-    public AddressResponse getOne(Integer addressId) {
-        return null;
-    }
-
-    @Override
-    public void update(Integer addressId, AddressRequest addressRequest) {
+    public void update(UserEntity userEntity, AddressUpdateRequest addressRequest) {
         log.info("Inside update method of AddressServiceImpl");
-        Address address = addressUtils.getAddressById(addressId);
+        Address address = addressUtils.getAddressByUserId(userEntity.getId());
         boolean changes = false;
 
         String updatedCounty = addressRequest.county();
@@ -91,6 +81,15 @@ public class AddressServiceImpl implements AddressService {
         }
 
         addressRepository.save(address);
-        log.info("Address with ID [{}] successfully updated", addressId);
+        log.info("Address updated successfully");
     }
+
+    @Override
+    public void delete(UserEntity userEntity) {
+        log.info("Inside deleteAddress method of AddressServiceImpl");
+        Address address = addressUtils.getAddressByUserId(userEntity.getId());
+        addressRepository.delete(address);
+        log.info("Address deleted successfully");
+    }
+
 }

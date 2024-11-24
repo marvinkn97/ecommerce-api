@@ -3,18 +3,15 @@ package dev.marvin.service;
 import dev.marvin.domain.UserEntity;
 import dev.marvin.dto.AddressRequest;
 import dev.marvin.dto.AddressResponse;
-import org.springframework.data.domain.Page;
-
-import java.util.Collection;
+import dev.marvin.dto.AddressUpdateRequest;
 
 public interface AddressService {
     void addAddress(AddressRequest addressRequest, UserEntity userEntity);
-    Collection<AddressResponse> getAll();
 
-    Page<AddressResponse> getAllPaginated();
+    AddressResponse getOne(UserEntity userEntity);
 
-    AddressResponse getOne(Integer addressId);
+    void update(UserEntity userEntity, AddressUpdateRequest addressRequest);
 
-    void update(Integer addressId, AddressRequest addressRequest);
+    void delete(UserEntity userEntity);
 
 }

@@ -1,7 +1,9 @@
 package dev.marvin.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -22,6 +24,10 @@ public class Address {
     private String town;
     private String street;
     private String building;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity userEntity;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

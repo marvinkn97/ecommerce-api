@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-@Schema(title = "Address Request", name = "AddressRequest", description = "Data Transfer Object (DTO) for adding or updating an address")
+@Schema(title = "Address Request", name = "AddressRequest", description = "Data Transfer Object (DTO) for adding an address")
 public record AddressRequest(
         @Schema(
                 description = "County of the address",

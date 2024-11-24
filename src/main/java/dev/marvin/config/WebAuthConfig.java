@@ -27,8 +27,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebAuthConfig {
-    private final PasswordEncoder passwordEncoder;
-    private final UserDetailsService userDetailsService;
     private final CorsConfigurationSource corsConfigurationSource;
     private final JwtValidationFilter jwtValidationFilter;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
@@ -64,7 +62,7 @@ public class WebAuthConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
         daoAuthenticationProvider.setUserDetailsService(userDetailsService);

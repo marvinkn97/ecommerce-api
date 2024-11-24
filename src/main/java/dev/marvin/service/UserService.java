@@ -1,7 +1,10 @@
 package dev.marvin.service;
 
 import dev.marvin.domain.UserEntity;
-import dev.marvin.dto.*;
+import dev.marvin.dto.PasswordChangeRequest;
+import dev.marvin.dto.PasswordCreationRequest;
+import dev.marvin.dto.UserProfileRequest;
+import dev.marvin.dto.UserProfileUpdateRequest;
 
 public interface UserService {
     void registerMobile(String mobileNumber);

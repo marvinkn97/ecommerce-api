@@ -2,8 +2,10 @@ package dev.marvin.utils;
 
 
 import dev.marvin.domain.UserPrincipal;
-import dev.marvin.exception.RequestValidationException;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,26 +64,14 @@ public class JwtUtils {
         return null;
     }
 
-    public Boolean validateToken(String token) {
-        log.info("Inside validateToken method of JwtUtils");
-        try {
-            Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
-            return claimsJws.getBody().getIssuer().equals(ISSUER);
-        } catch (JwtException e) {
-            log.error("JWT validation error: {}", e.getMessage(), e);
-            throw new RequestValidationException("Token is invalid", e);
-        }
+    public Claims extractClaimsFromToken(String token) {
+        log.info("Inside extractClaimsFromToken method of JwtUtils");
+        return Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
     }
 
-    public Map<String, Object> extractClaimsFromToken(String token) {
-        log.info("Inside extractClaimsFromToken method of JwtUtils");
-        try {
-            Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
-            return new HashMap<>(claims);
-        } catch (JwtException e) {
-            log.error("Error occurred in extractClaimsFromToken method of JwtUtils: {}", e.getMessage(), e);
-            return Collections.emptyMap();
-        }
-
+    public Boolean validateToken(String token) {
+        log.info("Inside validateToken method of JwtUtils");
+            Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
+            return claimsJws.getBody().getIssuer().equals(ISSUER);
     }
 }

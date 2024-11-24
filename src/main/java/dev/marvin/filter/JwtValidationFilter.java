@@ -1,9 +1,5 @@
 package dev.marvin.filter;
 
-import dev.marvin.domain.UserEntity;
-import dev.marvin.domain.UserPrincipal;
-import dev.marvin.exception.ResourceNotFoundException;
-import dev.marvin.repository.UserRepository;
 import dev.marvin.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,7 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -27,7 +24,7 @@ import java.util.Map;
 @Slf4j
 public class JwtValidationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
-    private final UserRepository userRepository;
+    private final UserDetailsService userDetailsService;
 
     @Override
 
@@ -44,17 +41,16 @@ public class JwtValidationFilter extends OncePerRequestFilter {
             Map<String, Object> claims = jwtUtils.extractClaimsFromToken(token);
             log.info("claims: {}", claims);
             String mobile = claims.get("sub").toString();
-            UserEntity user = userRepository.findByMobile(mobile)
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found with given mobile %s".formatted(mobile)));
-            UserDetails userDetails = new UserPrincipal(user);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(mobile);
+            log.info("userDetails: {}", userDetails);
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
+            usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             log.info("usernamePasswordAuthenticationToken: {}", usernamePasswordAuthenticationToken);
 
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-
-            filterChain.doFilter(request, response);
         }
+
+        filterChain.doFilter(request, response);
     }
 }
