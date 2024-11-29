@@ -36,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             Category category = new Category();
             category.setCategoryName(categoryRequest.categoryName());
-            category.setStatus(Status.Active);
+            category.setStatus(Status.ACTIVE);
             categoryRepository.save(category);
         } catch (DataIntegrityViolationException ex) {
             log.error("DataIntegrityViolationException {}", ex.getMessage(), ex);
@@ -87,7 +87,7 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("Inside toggleStatus method of CategoryServiceImpl");
         Category category = categoryUtils.getCategoryById(categoryId);
         Status currentStatus = category.getStatus();
-        Status updatedStatus = currentStatus.equals(Status.Active) ? Status.Inactive : Status.Active;
+        Status updatedStatus = currentStatus.equals(Status.ACTIVE) ? Status.INACTIVE : Status.ACTIVE;
         category.setStatus(updatedStatus);
         categoryRepository.save(category);
     }
