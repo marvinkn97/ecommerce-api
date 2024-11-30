@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -16,10 +15,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToMany(mappedBy = "order", orphanRemoval = true)
-    private Collection<OrderItem> orderItem;
+    @Column(unique = true)
+    private String orderNo;
 
-    private BigDecimal totalAmount;
+    @OneToMany(mappedBy = "order", orphanRemoval = true)
+    private Collection<OrderItem> orderItems;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -27,10 +27,6 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
-
-    @ManyToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
 
     @Enumerated(EnumType.STRING)
     private Status status;

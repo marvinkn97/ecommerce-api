@@ -40,4 +40,7 @@ public class UserEntity {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @OneToOne(mappedBy = "userEntity")
+    private Address address;
 }

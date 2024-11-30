@@ -11,4 +11,7 @@ public interface CartService {
     void deleteCartItem(Integer productId, UserEntity userEntity);
 
     CartResponse getCart(UserEntity userEntity);
+
+    void deleteAllCartItems(UserEntity userEntity);
+
 }

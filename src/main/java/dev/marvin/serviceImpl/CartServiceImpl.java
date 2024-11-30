@@ -9,6 +9,7 @@ import dev.marvin.exception.RequestValidationException;
 import dev.marvin.exception.ResourceNotFoundException;
 import dev.marvin.repository.CartRepository;
 import dev.marvin.service.CartService;
+import dev.marvin.utils.CartUtils;
 import dev.marvin.utils.Mapper;
 import dev.marvin.utils.ProductUtils;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class CartServiceImpl implements CartService {
     private final ProductUtils productUtils;
+    private final CartUtils cartUtils;
     private final CartRepository cartRepository;
 
     @Override
@@ -66,7 +68,7 @@ public class CartServiceImpl implements CartService {
         log.info("Inside reduceCartItemQuantity method of CartServiceImpl");
 
         // Fetch user's cart
-        Cart cart = cartRepository.findByUserId(userEntity.getId()).orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+        Cart cart = cartUtils.getCartByUserId(userEntity.getId());
 
         // Find the product in the cart
         CartItem cartItem = cart.getCartItems()
@@ -92,8 +94,7 @@ public class CartServiceImpl implements CartService {
         log.info("Inside reduceCartItemQuantity method of CartServiceImpl");
 
         // Fetch user's cart
-        Cart cart = cartRepository.findByUserId(userEntity.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user ID: " + userEntity.getId()));
+        Cart cart = cartUtils.getCartByUserId(userEntity.getId());
 
         // Find the product in the cart
         CartItem cartItem = cart.getCartItems()
@@ -111,7 +112,12 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartResponse getCart(UserEntity userEntity) {
         log.info("Inside getCart method of CartServiceImpl");
-        Cart cart = cartRepository.findByUserId(userEntity.getId()).orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+        Cart cart = cartUtils.getCartByUserId(userEntity.getId());
         return Mapper.mapToDto(cart);
+    }
+
+    @Override
+    public void deleteAllCartItems(UserEntity userEntity) {
+
     }
 }

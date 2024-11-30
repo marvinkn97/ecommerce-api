@@ -35,7 +35,29 @@ public class Mapper {
         return new CartResponse(cart.getUserEntity().getMobileNumber(), cartItems, totalAmount);
     }
 
-    public static AddressResponse mapToDto(Address address){
+    public static AddressResponse mapToDto(Address address) {
         return new AddressResponse(address.getCounty(), address.getTown(), address.getStreet(), address.getBuilding());
+    }
+
+    public static CustomerResponse mapToDto(UserEntity userEntity) {
+        return new CustomerResponse(userEntity.getFullName(), userEntity.getMobileNumber(), mapToDto(userEntity.getAddress()));
+    }
+
+    public static OrderItemResponse mapToDto(OrderItem orderItem) {
+        return new OrderItemResponse(mapToDto(orderItem.getProduct()), orderItem.getQuantity());
+    }
+
+    public static OrderResponse mapToDto(Order order) {
+        CustomerResponse customer = mapToDto(order.getUser());
+
+        Collection<OrderItemResponse> orderItems = order.getOrderItems()
+                .stream().map(Mapper::mapToDto)
+                .collect(Collectors.toSet());
+
+        BigDecimal totalAmount = order.getOrderItems()
+                .stream()
+                .map(orderItem -> orderItem.getProduct().getProductPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return new OrderResponse(order.getOrderNo(), customer, orderItems, totalAmount, order.getCreatedAt(), order.getStatus().name());
     }
 }
