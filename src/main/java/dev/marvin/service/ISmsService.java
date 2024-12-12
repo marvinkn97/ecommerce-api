@@ -2,6 +2,6 @@ package dev.marvin.service;
 
 import dev.marvin.dto.SmsRequest;
 
-public interface SmsService {
+public interface ISmsService {
     void sendSms(SmsRequest smsRequest);
 }

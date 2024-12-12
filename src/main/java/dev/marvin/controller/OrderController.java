@@ -2,7 +2,7 @@ package dev.marvin.controller;
 
 import dev.marvin.domain.UserEntity;
 import dev.marvin.dto.ResponseDto;
-import dev.marvin.service.OrderService;
+import dev.marvin.service.IOrderService;
 import dev.marvin.utils.AuthUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Order Resource", description = "CRUD Operations for Order Management")
 public class OrderController {
     private final AuthUtils authUtils;
-    private final OrderService orderService;
+    private final IOrderService orderService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")

@@ -6,8 +6,8 @@ import dev.marvin.dto.PreAuthRequest;
 import dev.marvin.dto.SmsRequest;
 import dev.marvin.exception.RequestValidationException;
 import dev.marvin.repository.OtpRepository;
-import dev.marvin.service.SmsService;
-import dev.marvin.service.UserService;
+import dev.marvin.service.ISmsService;
+import dev.marvin.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -22,8 +22,8 @@ import java.util.Random;
 @Slf4j
 public class OtpUtils {
     private final OtpRepository otpRepository;
-    private final SmsService smsService;
-    private final UserService userService;
+    private final ISmsService smsService;
+    private final IUserService userService;
 
     @Transactional
     @Async

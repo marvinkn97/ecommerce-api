@@ -1,11 +1,11 @@
 package dev.marvin.controller;
 
-import dev.marvin.constants.MessageConstants;
+import dev.marvin.utils.MessageConstants;
 import dev.marvin.domain.UserEntity;
 import dev.marvin.dto.AddressRequest;
 import dev.marvin.dto.AddressUpdateRequest;
 import dev.marvin.dto.ResponseDto;
-import dev.marvin.service.AddressService;
+import dev.marvin.service.IAddressService;
 import dev.marvin.utils.AuthUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Tag(name = "Address Resource", description = "CRUD operations for managing user addresses")
 public class AddressController {
-    private final AddressService addressService;
+    private final IAddressService addressService;
     private final AuthUtils authUtils;
 
     @PostMapping

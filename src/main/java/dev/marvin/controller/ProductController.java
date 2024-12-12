@@ -1,10 +1,10 @@
 package dev.marvin.controller;
 
-import dev.marvin.constants.MessageConstants;
+import dev.marvin.utils.MessageConstants;
 import dev.marvin.dto.ProductRequest;
 import dev.marvin.dto.ProductUpdateRequest;
 import dev.marvin.dto.ResponseDto;
-import dev.marvin.service.ProductService;
+import dev.marvin.service.IProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(name = "Product Resource", description = "CRUD Operations for Product Management")
 public class ProductController {
-    private final ProductService productService;
+    private final IProductService productService;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")

@@ -7,27 +7,27 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.sql.Blob;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
 
 @Entity
-@Table(name = "t_categories")
+@Table(name = "t_images")
 @NoArgsConstructor
 @Getter
 @Setter
-public class Category {
+public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(unique = true)
-    private String name;
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    private String fileType;
+    private String fileName;
+    @Lob
+    private Blob image;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
-    Collection<Product> products = new HashSet<>();
 }

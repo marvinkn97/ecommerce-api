@@ -1,9 +1,9 @@
 package dev.marvin.controller;
 
-import dev.marvin.constants.MessageConstants;
+import dev.marvin.utils.MessageConstants;
 import dev.marvin.domain.UserPrincipal;
 import dev.marvin.dto.ResponseDto;
-import dev.marvin.service.CartService;
+import dev.marvin.service.ICartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -25,7 +25,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Tag(name = "Cart Resource", description = "CRUD operations for Cart Management")
 public class CartController {
-    private final CartService cartService;
+    private final ICartService cartService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')") //change later

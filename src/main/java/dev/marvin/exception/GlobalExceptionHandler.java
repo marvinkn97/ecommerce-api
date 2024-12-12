@@ -1,6 +1,6 @@
 package dev.marvin.exception;
 
-import dev.marvin.constants.MessageConstants;
+import dev.marvin.utils.MessageConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;

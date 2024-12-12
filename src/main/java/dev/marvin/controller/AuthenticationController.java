@@ -1,8 +1,8 @@
 package dev.marvin.controller;
 
-import dev.marvin.constants.MessageConstants;
+import dev.marvin.utils.MessageConstants;
 import dev.marvin.dto.*;
-import dev.marvin.service.UserService;
+import dev.marvin.service.IUserService;
 import dev.marvin.utils.JwtUtils;
 import dev.marvin.utils.OtpUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +33,7 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final OtpUtils otpUtils;
-    private final UserService userService;
+    private final IUserService userService;
 
     @PostMapping("/verify-user")
     @Operation(summary = "Verify user", description = "Checks if a user is registered by their mobile number. If registered, prompts login; otherwise, sends an OTP for registration.", method = "POST")

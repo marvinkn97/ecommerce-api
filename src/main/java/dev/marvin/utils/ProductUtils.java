@@ -1,6 +1,5 @@
 package dev.marvin.utils;
 
-import dev.marvin.constants.MessageConstants;
 import dev.marvin.domain.Product;
 import dev.marvin.exception.ResourceNotFoundException;
 import dev.marvin.repository.ProductRepository;

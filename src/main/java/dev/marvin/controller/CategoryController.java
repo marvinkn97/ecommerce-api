@@ -1,9 +1,9 @@
 package dev.marvin.controller;
 
-import dev.marvin.constants.MessageConstants;
+import dev.marvin.utils.MessageConstants;
 import dev.marvin.dto.CategoryRequest;
 import dev.marvin.dto.ResponseDto;
-import dev.marvin.service.CategoryService;
+import dev.marvin.service.ICategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(name = "Category Resource", description = "CRUD Operations for Category Management")
 public class CategoryController {
-    private final CategoryService categoryService;
+    private final ICategoryService service;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -30,7 +30,7 @@ public class CategoryController {
     @ApiResponses({@ApiResponse(responseCode = "201", description = "Category added successfully"), @ApiResponse(responseCode = "409", description = "Duplicate entry"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<String>> add(@Valid @RequestBody CategoryRequest categoryRequest) {
         log.info("Inside add method of CategoryController");
-        categoryService.add(categoryRequest);
+        service.add(categoryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), MessageConstants.CATEGORY_CREATED));
     }
 
@@ -39,7 +39,7 @@ public class CategoryController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Successfully retrieved list of categories"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<Object>> getAll() {
         log.info("Inside getAll method of CategoryController");
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), categoryService.getAll()));
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), service.getAll()));
     }
 
     @GetMapping("/paginated")
@@ -47,7 +47,7 @@ public class CategoryController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Successfully retrieved paginated list of categories"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<Object>> getAllPaginated() {
         log.info("Inside getAllPaginated method of CategoryController");
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), categoryService.getAllPaginated()));
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), service.getAllPaginated()));
     }
 
     @GetMapping("/{categoryId}")
@@ -55,7 +55,7 @@ public class CategoryController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Successfully retrieved the specified category"), @ApiResponse(responseCode = "404", description = "Category not found for the provided ID"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<Object>> getOne(@PathVariable("categoryId") Integer categoryId) {
         log.info("Inside getOne method of CategoryController");
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), categoryService.getOne(categoryId)));
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), service.getOne(categoryId)));
     }
 
     @PutMapping("/{categoryId}")
@@ -64,7 +64,7 @@ public class CategoryController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Category updated successfully"), @ApiResponse(responseCode = "400", description = "Invalid request data provided"), @ApiResponse(responseCode = "404", description = "Category not found for the provided ID"), @ApiResponse(responseCode = "403", description = "User does not have permission to update this category"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<String>> update(@PathVariable("categoryId") Integer categoryId, @Valid @RequestBody CategoryRequest categoryRequest) {
         log.info("Inside update method of CategoryController");
-        categoryService.update(categoryId, categoryRequest);
+        service.update(categoryId, categoryRequest);
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), MessageConstants.CATEGORY_UPDATED));
     }
 
@@ -74,7 +74,7 @@ public class CategoryController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Category status updated successfully"), @ApiResponse(responseCode = "404", description = "Category not found for the provided ID"), @ApiResponse(responseCode = "403", description = "User does not have permission to modify this category"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<String>> toggleStatus(@PathVariable("categoryId") Integer categoryId) {
         log.info("Inside toggleStatus method of CategoryController");
-        categoryService.toggleStatus(categoryId);
+        service.toggleStatus(categoryId);
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), MessageConstants.CATEGORY_STATUS_UPDATED));
     }
 }

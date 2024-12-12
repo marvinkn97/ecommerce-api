@@ -1,4 +1,4 @@
-package dev.marvin.serviceImpl;
+package dev.marvin.service;
 
 import dev.marvin.domain.UserEntity;
 import dev.marvin.domain.UserPrincipal;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
     private final UserUtils userUtils;
 
     @Override

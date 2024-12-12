@@ -1,4 +1,4 @@
-package dev.marvin.constants;
+package dev.marvin.utils;
 
 public class MessageConstants {
 

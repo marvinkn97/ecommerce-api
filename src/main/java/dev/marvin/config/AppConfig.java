@@ -1,5 +1,7 @@
 package dev.marvin.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -7,7 +9,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class OpenApiConfig {
+public class AppConfig {
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper().registerModule(new JavaTimeModule());
+    }
 
     @Bean
     public OpenAPI customOpenApi() {
@@ -21,4 +27,5 @@ public class OpenApiConfig {
                                 .name("Marvin Nyingi")
                         ));
     }
+
 }

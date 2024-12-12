@@ -1,11 +1,11 @@
 package dev.marvin.controller;
 
-import dev.marvin.constants.MessageConstants;
+import dev.marvin.utils.MessageConstants;
 import dev.marvin.domain.UserPrincipal;
 import dev.marvin.dto.PasswordChangeRequest;
 import dev.marvin.dto.ResponseDto;
 import dev.marvin.dto.UserProfileUpdateRequest;
-import dev.marvin.service.UserService;
+import dev.marvin.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -28,10 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @Tag(name = "User Resource", description = "CRUD operations for user management")
 public class UserController {
-    private final UserService userService;
+    private final IUserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(IUserService userService) {
         this.userService = userService;
     }
 
