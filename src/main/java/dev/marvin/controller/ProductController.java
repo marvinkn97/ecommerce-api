@@ -18,7 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1/products")
+@RequestMapping("${app.api.prefix}/products")
 @Slf4j
 @RequiredArgsConstructor
 @Tag(name = "Product Resource", description = "CRUD Operations for Product Management")

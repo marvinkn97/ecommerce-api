@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/v1/users")
+@RequestMapping("${app.api.prefix}/users")
 @Slf4j
 @Tag(name = "User Resource", description = "CRUD operations for user management")
 public class UserController {

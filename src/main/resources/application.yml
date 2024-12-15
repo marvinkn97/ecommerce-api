@@ -26,3 +26,6 @@ sms:
     endpoint: https://api2.tiaraconnect.io/api/messaging/sendsms
     key: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMzgiLCJvaWQiOjMzOCwidWlkIjoiYjEyZmY4NTgtMzY5MS00NjUwLTg2YWMtNGEwOTcxZWMzZTQ5IiwiYXBpZCI6MzQ5LCJpYXQiOjE3MjI1MjEyNjUsImV4cCI6MjA2MjUyMTI2NX0.1ivj9Aq1PB7hY7FyLGrGPK3LYRTToy3b-dxceYaR_PND_ZoxSJGeKtTOM5sYFXhrNQnwUfUuNK9FjujzHeIt0A
 
+app:
+  api:
+    prefix: api/v1

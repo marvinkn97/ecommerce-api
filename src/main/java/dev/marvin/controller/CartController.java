@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("api/v1/cart")
+@RequestMapping("${app.api.prefix}/cart")
 @Slf4j
 @RequiredArgsConstructor
 @Tag(name = "Cart Resource", description = "CRUD operations for Cart Management")
