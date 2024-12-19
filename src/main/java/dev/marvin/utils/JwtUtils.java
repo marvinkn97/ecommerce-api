@@ -1,7 +1,7 @@
 package dev.marvin.utils;
 
 
-import dev.marvin.domain.UserPrincipal;
+import dev.marvin.user.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
