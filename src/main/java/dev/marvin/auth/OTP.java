@@ -1,18 +1,14 @@
-package dev.marvin.domain;
+package dev.marvin.auth;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "t_otp")
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class OTP {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

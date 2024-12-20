@@ -1,16 +1,11 @@
-package dev.marvin.service;
+package dev.marvin.category;
 
-import dev.marvin.utils.MessageConstants;
-import dev.marvin.utils.PaginationConstants;
-import dev.marvin.domain.Category;
-import dev.marvin.domain.Status;
-import dev.marvin.dto.CategoryRequest;
-import dev.marvin.dto.CategoryResponse;
 import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.exception.ResourceNotFoundException;
-import dev.marvin.repository.CategoryRepository;
-import dev.marvin.utils.CategoryUtils;
-import dev.marvin.utils.Mapper;
+import dev.marvin.shared.Mapper;
+import dev.marvin.shared.MessageConstants;
+import dev.marvin.shared.PaginationConstants;
+import dev.marvin.shared.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,17 +20,18 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CategoryService implements ICategoryService {
+public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryUtils categoryUtils;
 
     @Override
+    @Transactional
     public void add(CategoryRequest categoryRequest) {
         log.info("Inside add method of CategoryServiceImpl");
         try {
-            Category category = new Category();
-            category.setName(categoryRequest.categoryName());
-            category.setStatus(Status.ACTIVE);
+            Category category = Category.builder()
+                    .name(categoryRequest.categoryName())
+                    .build();
             categoryRepository.save(category);
         } catch (DataIntegrityViolationException ex) {
             log.error("DataIntegrityViolationException {}", ex.getMessage(), ex);

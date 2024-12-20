@@ -1,4 +1,4 @@
-package dev.marvin.domain;
+package dev.marvin.user;
 
 public enum RoleEnum {
     ROLE_ADMIN,

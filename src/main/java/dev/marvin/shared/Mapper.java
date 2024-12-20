@@ -1,9 +1,21 @@
-package dev.marvin.utils;
+package dev.marvin.shared;
 
+import dev.marvin.address.Address;
+import dev.marvin.address.AddressResponse;
+import dev.marvin.cart.Cart;
+import dev.marvin.cart.CartItem;
+import dev.marvin.cart.CartItemResponse;
+import dev.marvin.cart.CartResponse;
 import dev.marvin.category.Category;
 import dev.marvin.category.CategoryResponse;
-import dev.marvin.domain.*;
-import dev.marvin.dto.*;
+import dev.marvin.order.Order;
+import dev.marvin.order.OrderItem;
+import dev.marvin.order.OrderItemResponse;
+import dev.marvin.order.OrderResponse;
+import dev.marvin.product.Product;
+import dev.marvin.product.ProductResponse;
+import dev.marvin.user.CustomerResponse;
+import dev.marvin.user.UserEntity;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -19,7 +31,7 @@ public class Mapper {
 
     public static ProductResponse mapToDto(Product product) {
         BigDecimal specialPrice = product.getPrice().subtract(product.getDiscountPrice());
-        return new ProductResponse(product.getId(), product.getName(), product.getPrice(), specialPrice, product.getQuantity(), product.getDescription());
+        return new ProductResponse(product.getId(), product.getName(), product.getPrice(), specialPrice, product.getQuantity(), product.getDescription(), product.getStatus().name());
     }
 
     public static CartItemResponse mapToDto(CartItem cartItem) {

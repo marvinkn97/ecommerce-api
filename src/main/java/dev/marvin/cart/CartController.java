@@ -1,6 +1,5 @@
-package dev.marvin.controller;
+package dev.marvin.cart;
 
-import dev.marvin.cart.CartService;
 import dev.marvin.shared.MessageConstants;
 import dev.marvin.shared.ResponseDto;
 import dev.marvin.user.UserPrincipal;

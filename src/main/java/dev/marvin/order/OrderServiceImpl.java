@@ -1,13 +1,19 @@
-package dev.marvin.service;
+package dev.marvin.order;
 
-import dev.marvin.domain.*;
-import dev.marvin.dto.OrderResponse;
-import dev.marvin.dto.SmsRequest;
+import dev.marvin.cart.Cart;
+import dev.marvin.cart.CartItem;
 import dev.marvin.exception.RequestValidationException;
 import dev.marvin.exception.ResourceNotFoundException;
-import dev.marvin.repository.*;
-import dev.marvin.utils.CartUtils;
-import dev.marvin.utils.Mapper;
+import dev.marvin.notification.sms.SmsRequest;
+import dev.marvin.notification.sms.SmsService;
+import dev.marvin.product.Product;
+import dev.marvin.product.ProductRepository;
+import dev.marvin.cart.CartItemRepository;
+import dev.marvin.cart.CartRepository;
+import dev.marvin.shared.Mapper;
+import dev.marvin.shared.Status;
+import dev.marvin.user.UserEntity;
+import dev.marvin.cart.CartUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,13 +27,13 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class OrderService implements IOrderService {
+public class OrderServiceImpl implements OrderService {
     private final CartUtils cartUtils;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
-    private final ISmsService smsService;
+    private final SmsService smsService;
     private final CartItemRepository cartItemRepository;
 
     @Override

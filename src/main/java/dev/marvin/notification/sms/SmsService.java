@@ -1,7 +1,5 @@
-package dev.marvin.service;
+package dev.marvin.notification.sms;
 
-import dev.marvin.dto.SmsRequest;
-
-public interface ISmsService {
+public interface SmsService {
     void sendSms(SmsRequest smsRequest);
 }

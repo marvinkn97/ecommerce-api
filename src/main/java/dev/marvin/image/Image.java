@@ -1,4 +1,4 @@
-package dev.marvin.domain;
+package dev.marvin.image;
 
 import dev.marvin.product.Product;
 import jakarta.persistence.*;
@@ -22,12 +22,16 @@ public class Image {
     private Integer id;
     private String fileType;
     private String fileName;
+
     @Lob
     private Blob image;
+
     private String downloadUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp

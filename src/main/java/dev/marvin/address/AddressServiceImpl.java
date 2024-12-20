@@ -1,14 +1,8 @@
-package dev.marvin.service;
+package dev.marvin.address;
 
-import dev.marvin.domain.Address;
-import dev.marvin.domain.UserEntity;
-import dev.marvin.dto.AddressRequest;
-import dev.marvin.dto.AddressResponse;
-import dev.marvin.dto.AddressUpdateRequest;
 import dev.marvin.exception.RequestValidationException;
-import dev.marvin.repository.AddressRepository;
-import dev.marvin.utils.AddressUtils;
-import dev.marvin.utils.Mapper;
+import dev.marvin.shared.Mapper;
+import dev.marvin.user.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +11,7 @@ import org.springframework.util.StringUtils;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AddressService implements IAddressService {
+public class AddressServiceImpl implements AddressService {
     private final AddressRepository addressRepository;
     private final AddressUtils addressUtils;
 

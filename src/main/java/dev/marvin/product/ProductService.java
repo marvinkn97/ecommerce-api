@@ -1,8 +1,5 @@
-package dev.marvin.service;
+package dev.marvin.product;
 
-import dev.marvin.product.ProductRequest;
-import dev.marvin.product.ProductResponse;
-import dev.marvin.product.ProductUpdateRequest;
 import org.springframework.data.domain.Page;
 
 import java.util.Collection;

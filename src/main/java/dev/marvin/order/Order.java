@@ -1,4 +1,4 @@
-package dev.marvin.domain;
+package dev.marvin.order;
 
 import dev.marvin.shared.Status;
 import dev.marvin.user.UserEntity;

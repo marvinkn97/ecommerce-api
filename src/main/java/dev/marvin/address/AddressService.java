@@ -1,11 +1,11 @@
-package dev.marvin.service;
+package dev.marvin.address;
 
-import dev.marvin.domain.UserEntity;
-import dev.marvin.dto.AddressRequest;
-import dev.marvin.dto.AddressResponse;
-import dev.marvin.dto.AddressUpdateRequest;
+import dev.marvin.address.AddressRequest;
+import dev.marvin.address.AddressResponse;
+import dev.marvin.address.AddressUpdateRequest;
+import dev.marvin.user.UserEntity;
 
-public interface IAddressService {
+public interface AddressService {
     void addAddress(AddressRequest addressRequest, UserEntity userEntity);
 
     AddressResponse getOne(UserEntity userEntity);

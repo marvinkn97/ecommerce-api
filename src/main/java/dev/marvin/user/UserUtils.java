@@ -1,8 +1,7 @@
-package dev.marvin.utils;
+package dev.marvin.user;
 
-import dev.marvin.domain.UserEntity;
 import dev.marvin.exception.ResourceNotFoundException;
-import dev.marvin.repository.UserRepository;
+import dev.marvin.shared.MessageConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

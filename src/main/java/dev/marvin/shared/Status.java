@@ -1,4 +1,4 @@
-package dev.marvin.domain;
+package dev.marvin.shared;
 
 public enum Status {
     ACTIVE,

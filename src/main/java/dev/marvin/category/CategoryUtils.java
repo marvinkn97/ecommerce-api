@@ -1,8 +1,7 @@
-package dev.marvin.utils;
+package dev.marvin.category;
 
-import dev.marvin.category.Category;
 import dev.marvin.exception.ResourceNotFoundException;
-import dev.marvin.category.CategoryRepository;
+import dev.marvin.shared.MessageConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package dev.marvin.dto;
+package dev.marvin.auth;
 
 public record AuthenticationResponse(String token) {
 }

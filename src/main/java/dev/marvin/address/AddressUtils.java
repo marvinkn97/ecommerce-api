@@ -1,8 +1,6 @@
-package dev.marvin.utils;
+package dev.marvin.address;
 
-import dev.marvin.address.Address;
 import dev.marvin.exception.ResourceNotFoundException;
-import dev.marvin.address.AddressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

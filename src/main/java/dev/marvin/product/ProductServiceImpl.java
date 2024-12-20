@@ -1,19 +1,13 @@
-package dev.marvin.service;
+package dev.marvin.product;
 
-import dev.marvin.shared.MessageConstants;
-import dev.marvin.shared.PaginationConstants;
 import dev.marvin.category.Category;
-import dev.marvin.product.Product;
-import dev.marvin.product.ProductRequest;
-import dev.marvin.product.ProductResponse;
-import dev.marvin.product.ProductUpdateRequest;
+import dev.marvin.category.CategoryUtils;
 import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.exception.RequestValidationException;
-import dev.marvin.product.ProductRepository;
-import dev.marvin.category.CategoryUtils;
 import dev.marvin.shared.Mapper;
+import dev.marvin.shared.MessageConstants;
+import dev.marvin.shared.PaginationConstants;
 import dev.marvin.shared.Status;
-import dev.marvin.utils.ProductUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;

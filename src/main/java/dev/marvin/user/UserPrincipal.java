@@ -1,4 +1,4 @@
-package dev.marvin.domain;
+package dev.marvin.user;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

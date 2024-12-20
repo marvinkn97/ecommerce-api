@@ -1,4 +1,4 @@
-package dev.marvin.utils;
+package dev.marvin.shared;
 
 public class PaginationConstants {
     private PaginationConstants(){}

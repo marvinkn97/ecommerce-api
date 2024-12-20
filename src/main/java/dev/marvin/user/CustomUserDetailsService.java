@@ -1,4 +1,4 @@
-package dev.marvin.service;
+package dev.marvin.user;
 
 import dev.marvin.user.UserEntity;
 import dev.marvin.user.UserPrincipal;

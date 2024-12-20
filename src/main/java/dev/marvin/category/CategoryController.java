@@ -1,9 +1,7 @@
-package dev.marvin.controller;
+package dev.marvin.category;
 
-import dev.marvin.utils.MessageConstants;
-import dev.marvin.dto.CategoryRequest;
-import dev.marvin.dto.ResponseDto;
-import dev.marvin.service.ICategoryService;
+import dev.marvin.shared.MessageConstants;
+import dev.marvin.shared.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -22,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(name = "Category Resource", description = "CRUD Operations for Category Management")
 public class CategoryController {
-    private final ICategoryService categoryService;
+    private final CategoryService categoryService;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")

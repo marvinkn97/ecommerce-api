@@ -1,7 +1,7 @@
-package dev.marvin.utils;
+package dev.marvin.auth;
 
-import dev.marvin.domain.UserEntity;
-import dev.marvin.domain.UserPrincipal;
+import dev.marvin.user.UserEntity;
+import dev.marvin.user.UserPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

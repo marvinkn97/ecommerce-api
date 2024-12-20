@@ -1,4 +1,4 @@
-package dev.marvin.dto;
+package dev.marvin.category;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

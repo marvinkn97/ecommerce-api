@@ -1,4 +1,4 @@
-package dev.marvin.dto;
+package dev.marvin.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;

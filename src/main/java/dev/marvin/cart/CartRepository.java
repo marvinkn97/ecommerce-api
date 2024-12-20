@@ -1,6 +1,5 @@
-package dev.marvin.repository;
+package dev.marvin.cart;
 
-import dev.marvin.domain.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

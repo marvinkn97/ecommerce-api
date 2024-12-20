@@ -1,5 +1,6 @@
-package dev.marvin.domain;
+package dev.marvin.user;
 
+import dev.marvin.address.Address;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

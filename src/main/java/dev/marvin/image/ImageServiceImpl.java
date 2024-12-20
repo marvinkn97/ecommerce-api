@@ -1,11 +1,9 @@
-package dev.marvin.service;
+package dev.marvin.image;
 
-import dev.marvin.domain.Image;
-import dev.marvin.domain.Product;
 import dev.marvin.exception.RequestValidationException;
 import dev.marvin.exception.ResourceNotFoundException;
-import dev.marvin.repository.ImageRepository;
-import dev.marvin.utils.ProductUtils;
+import dev.marvin.product.Product;
+import dev.marvin.product.ProductUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,7 @@ import java.util.Collection;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ImageService implements IImageService {
+public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
     private final ProductUtils productUtils;
 

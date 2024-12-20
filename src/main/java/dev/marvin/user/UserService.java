@@ -1,12 +1,9 @@
-package dev.marvin.service;
+package dev.marvin.user;
 
-import dev.marvin.domain.UserEntity;
 import dev.marvin.auth.PasswordChangeRequest;
 import dev.marvin.auth.PasswordCreationRequest;
-import dev.marvin.dto.UserProfileRequest;
-import dev.marvin.dto.UserProfileUpdateRequest;
 
-public interface IUserService {
+public interface UserService {
     void registerMobile(String mobileNumber);
 
     void setPasswordForUser(PasswordCreationRequest passwordCreationRequest);

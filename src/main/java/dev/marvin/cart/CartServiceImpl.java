@@ -1,16 +1,11 @@
-package dev.marvin.service;
+package dev.marvin.cart;
 
-import dev.marvin.cart.Cart;
-import dev.marvin.cart.CartItem;
-import dev.marvin.cart.CartResponse;
 import dev.marvin.exception.RequestValidationException;
 import dev.marvin.exception.ResourceNotFoundException;
 import dev.marvin.product.Product;
-import dev.marvin.cart.CartRepository;
 import dev.marvin.shared.Mapper;
 import dev.marvin.user.UserEntity;
-import dev.marvin.utils.CartUtils;
-import dev.marvin.utils.ProductUtils;
+import dev.marvin.product.ProductUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CartService implements ICartService {
+public class CartServiceImpl implements CartService {
     private final ProductUtils productUtils;
     private final CartUtils cartUtils;
     private final CartRepository cartRepository;

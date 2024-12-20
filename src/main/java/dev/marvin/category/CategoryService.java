@@ -1,12 +1,10 @@
-package dev.marvin.service;
+package dev.marvin.category;
 
-import dev.marvin.dto.CategoryRequest;
-import dev.marvin.dto.CategoryResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.Collection;
 
-public interface ICategoryService {
+public interface CategoryService {
     void add(CategoryRequest categoryRequest);
 
     Collection<CategoryResponse> getAll();

@@ -1,16 +1,10 @@
-package dev.marvin.service;
+package dev.marvin.user;
 
-import dev.marvin.domain.RoleEnum;
-import dev.marvin.domain.UserEntity;
 import dev.marvin.auth.PasswordChangeRequest;
 import dev.marvin.auth.PasswordCreationRequest;
-import dev.marvin.dto.UserProfileRequest;
-import dev.marvin.dto.UserProfileUpdateRequest;
 import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.exception.RequestValidationException;
-import dev.marvin.repository.UserRepository;
-import dev.marvin.utils.MessageConstants;
-import dev.marvin.utils.UserUtils;
+import dev.marvin.shared.MessageConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,7 +19,7 @@ import java.util.Objects;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserService implements IUserService {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserUtils userUtils;

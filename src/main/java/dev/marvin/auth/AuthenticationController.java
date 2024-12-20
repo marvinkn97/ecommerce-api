@@ -1,19 +1,17 @@
-package dev.marvin.controller;
+package dev.marvin.auth;
 
-import dev.marvin.utils.MessageConstants;
-import dev.marvin.dto.*;
-import dev.marvin.service.IUserService;
-import dev.marvin.utils.JwtUtils;
-import dev.marvin.utils.OtpUtils;
+import dev.marvin.shared.MessageConstants;
+import dev.marvin.shared.ResponseDto;
+import dev.marvin.user.UserProfileRequest;
+import dev.marvin.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,7 +31,7 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final OtpUtils otpUtils;
-    private final IUserService userService;
+    private final UserService userService;
 
     @PostMapping("/verify-user")
     @Operation(summary = "Verify user", description = "Checks if a user is registered by their mobile number. If registered, prompts login; otherwise, sends an OTP for registration.", method = "POST")
@@ -60,7 +58,7 @@ public class AuthenticationController {
 
     @PostMapping("/create-password")
     @Operation(summary = "Create Password", description = "Creates a secure password for the user. Password must be at least 8 characters long.", method = "POST")
-    @ApiResponses({@ApiResponse(responseCode = "201", description = "Password created successfully", content = @Content(schema = @Schema(implementation = ResponseDto.class))), @ApiResponse(responseCode = "400", description = "Invalid password format or request data."), @ApiResponse(responseCode = "500", description = "Internal server error.")})
+    @ApiResponses({@ApiResponse(responseCode = "201", description = "Password created successfully"), @ApiResponse(responseCode = "400", description = "Invalid password format or request data."), @ApiResponse(responseCode = "500", description = "Internal server error.")})
     public ResponseEntity<ResponseDto<String>> createPassword(@Valid @RequestBody PasswordCreationRequest passwordCreationRequest) {
         log.info("Inside createPassword method of AuthenticationController");
         userService.setPasswordForUser(passwordCreationRequest);
@@ -69,7 +67,7 @@ public class AuthenticationController {
 
     @PostMapping("/complete-profile")
     @Operation(summary = "Complete Profile", description = "Completes the user profile by setting up required user details.", method = "POST")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "User profile completed successfully.", content = @Content(schema = @Schema(implementation = ResponseDto.class))), @ApiResponse(responseCode = "400", description = "Invalid request data.", content = @Content(schema = @Schema(implementation = ResponseDto.class))), @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content(schema = @Schema(implementation = ResponseDto.class)))})
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "User profile completed successfully."), @ApiResponse(responseCode = "400", description = "Invalid request data."), @ApiResponse(responseCode = "500", description = "Internal server error.")})
     public ResponseEntity<ResponseDto<String>> completeProfile(@Valid @RequestBody UserProfileRequest userProfileRequest) {
         log.info("Inside completeProfile method of AuthenticationController");
         userService.completeUserProfile(userProfileRequest);
@@ -84,6 +82,6 @@ public class AuthenticationController {
         log.info("Inside authenticate method of AuthenticationController");
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.mobile(), authenticationRequest.password()));
         String token = jwtUtils.generateToken(authentication);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), new AuthenticationResponse(token)));
+        return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.AUTHORIZATION, token).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), new AuthenticationResponse(token)));
     }
 }

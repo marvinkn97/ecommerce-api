@@ -1,4 +1,4 @@
-package dev.marvin.dto;
+package dev.marvin.order;
 
 import dev.marvin.user.CustomerResponse;
 

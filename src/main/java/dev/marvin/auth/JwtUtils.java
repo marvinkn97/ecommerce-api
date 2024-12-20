@@ -1,4 +1,4 @@
-package dev.marvin.utils;
+package dev.marvin.auth;
 
 
 import dev.marvin.user.UserPrincipal;

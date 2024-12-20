@@ -1,8 +1,6 @@
-package dev.marvin.utils;
+package dev.marvin.cart;
 
-import dev.marvin.cart.Cart;
 import dev.marvin.exception.ResourceNotFoundException;
-import dev.marvin.cart.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

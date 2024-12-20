@@ -1,6 +1,5 @@
-package dev.marvin.repository;
+package dev.marvin.address;
 
-import dev.marvin.domain.Address;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

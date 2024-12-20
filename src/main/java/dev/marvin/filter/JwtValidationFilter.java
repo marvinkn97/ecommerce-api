@@ -1,6 +1,6 @@
 package dev.marvin.filter;
 
-import dev.marvin.utils.JwtUtils;
+import dev.marvin.auth.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,7 +1,6 @@
-package dev.marvin.service;
+package dev.marvin.notification.sms;
 
-import dev.marvin.dto.SmsRequest;
-import dev.marvin.utils.MessageConstants;
+import dev.marvin.shared.MessageConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +18,7 @@ import java.util.Map;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class TiaraSmsService implements ISmsService {
+public class TiaraSmsServiceImpl implements SmsService {
     private final RestTemplateBuilder restTemplateBuilder;
 
     @Value("${sms.api.endpoint}")

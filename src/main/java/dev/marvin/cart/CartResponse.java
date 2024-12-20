@@ -1,4 +1,4 @@
-package dev.marvin.dto;
+package dev.marvin.cart;
 
 import java.math.BigDecimal;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package dev.marvin.domain;
+package dev.marvin.cart;
 
 import dev.marvin.user.UserEntity;
 import jakarta.persistence.*;
