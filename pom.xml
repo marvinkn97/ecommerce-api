@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>dev.marvin</groupId>
-	<artifactId>sportstore-api</artifactId>
+	<artifactId>ecommerce-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ecommerce-api</name>
 	<description>Demo project for Spring Boot</description>

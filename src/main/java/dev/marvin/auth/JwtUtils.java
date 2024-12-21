@@ -3,7 +3,6 @@ package dev.marvin.auth;
 
 import dev.marvin.user.UserPrincipal;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -71,7 +70,7 @@ public class JwtUtils {
 
     public Boolean validateToken(String token) {
         log.info("Inside validateToken method of JwtUtils");
-            Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
-            return claimsJws.getBody().getIssuer().equals(ISSUER);
+            Claims claims = extractClaimsFromToken(token);
+            return !claims.getExpiration().before(new Date()) && claims.getIssuer().equals(ISSUER);
     }
 }

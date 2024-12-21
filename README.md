@@ -4,14 +4,8 @@ A simple eCommerce API that allows users to order products and manage a database
 
 ## Features
 
-- Product management: Add, view, update, and delete products.
-- Cart management: Database-driven cart functionality.
-- Order processing: Place and manage orders.
-- SMS notifications: Integrated with Tiara Connect for order updates.
-
-### Prerequisites
-
-- Java 17+
-- Maven
-- MySQL
-- Tiara Connect API credentials
+- User Management - User onboarding with OTP functionality and user profile management
+- Product management: Add, view, update, and delete products
+- Cart management: Database-driven cart functionality
+- Order processing: Place and manage orders
+- SMS notifications: Integrated with Tiara Connect for system notifications

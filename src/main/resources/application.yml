@@ -1,31 +1,28 @@
 server:
   port: 8088
 
+app:
+  api:
+    prefix: api/v1
+
 logging:
   level:
     org:
       springframework:
         security: DEBUG
 
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/ecommerce
-    username: root
-    password: pass@123
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+#spring:
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/ecommerce
+#    username: root
+#    password: pass@123
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
 
-sms:
-  api:
-    endpoint: https://api2.tiaraconnect.io/api/messaging/sendsms
-    key: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMzgiLCJvaWQiOjMzOCwidWlkIjoiYjEyZmY4NTgtMzY5MS00NjUwLTg2YWMtNGEwOTcxZWMzZTQ5IiwiYXBpZCI6MzQ5LCJpYXQiOjE3MjI1MjEyNjUsImV4cCI6MjA2MjUyMTI2NX0.1ivj9Aq1PB7hY7FyLGrGPK3LYRTToy3b-dxceYaR_PND_ZoxSJGeKtTOM5sYFXhrNQnwUfUuNK9FjujzHeIt0A
 
-app:
-  api:
-    prefix: api/v1

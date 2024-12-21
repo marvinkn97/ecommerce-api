@@ -4,21 +4,25 @@ import dev.marvin.user.RoleEnum;
 import dev.marvin.user.UserEntity;
 import dev.marvin.user.UserRepository;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@EnableTransactionManagement
 public class EcommerceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(EcommerceApplication.class, args);
+        new SpringApplicationBuilder()
+                .sources(EcommerceApplication.class)
+                .profiles("dev")
+                .build()
+                .run(args);
     }
 
     @Bean
-    public CommandLineRunner runner(PasswordEncoder passwordEncoder, UserRepository userRepository){
+    @Profile("!test")
+    public CommandLineRunner runner(PasswordEncoder passwordEncoder, UserRepository userRepository) {
         return args -> {
             UserEntity admin = new UserEntity();
             admin.setMobileNumber("254796196179");
