@@ -21,7 +21,7 @@ public class EcommerceApplication {
     }
 
     @Bean
-    @Profile("!test")
+    @Profile("dev")
     public CommandLineRunner runner(PasswordEncoder passwordEncoder, UserRepository userRepository) {
         return args -> {
             UserEntity admin = new UserEntity();
