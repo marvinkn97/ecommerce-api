@@ -1,6 +1,7 @@
 package dev.marvin.category;
 
 import dev.marvin.exception.DuplicateResourceException;
+import dev.marvin.exception.RequestValidationException;
 import dev.marvin.exception.ResourceNotFoundException;
 import dev.marvin.shared.Mapper;
 import dev.marvin.shared.MessageConstants;
@@ -69,10 +70,17 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public void update(Integer categoryId, CategoryRequest categoryRequest) {
         log.info("Inside update method of CategoryServiceImpl");
+        boolean changes = false;
         Category category = categoryUtils.getCategoryById(categoryId);
-        if (StringUtils.hasText(categoryRequest.categoryName())) {
+        if (StringUtils.hasText(categoryRequest.categoryName()) && !category.getName().equals(categoryRequest.categoryName())) {
             category.setName(categoryRequest.categoryName());
+            changes = true;
         }
+
+        if (!changes) {
+            throw new RequestValidationException("no data changes found");
+        }
+
         categoryRepository.save(category);
     }
 
