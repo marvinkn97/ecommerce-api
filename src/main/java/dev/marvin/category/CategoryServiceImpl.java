@@ -26,18 +26,19 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void add(CategoryRequest categoryRequest) {
+    public CategoryResponse add(CategoryRequest categoryRequest) {
         log.info("Inside add method of CategoryServiceImpl");
         try {
             Category category = Category.builder()
                     .name(categoryRequest.categoryName())
                     .build();
-            categoryRepository.save(category);
+            return categoryUtils.mapToDto(categoryRepository.save(category));
         } catch (DataIntegrityViolationException ex) {
             log.error("DataIntegrityViolationException {}", ex.getMessage(), ex);
-            if (ex.getMessage().contains("category_name")) {
+            if (ex.getMessage().contains("name")) {
                 throw new DuplicateResourceException(MessageConstants.DUPLICATE_CATEGORY_NAME);
             }
+            throw new RequestValidationException(MessageConstants.UNEXPECTED_ERROR);
         }
     }
 
@@ -67,7 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void update(Integer categoryId, CategoryRequest categoryRequest) {
+    public CategoryResponse update(Integer categoryId, CategoryRequest categoryRequest) {
         log.info("Inside update method of CategoryServiceImpl");
         boolean changes = false;
         Category category = categoryUtils.getCategoryById(categoryId);
@@ -80,17 +81,17 @@ public class CategoryServiceImpl implements CategoryService {
             throw new RequestValidationException("no data changes found");
         }
 
-        categoryRepository.save(category);
+        return categoryUtils.mapToDto(categoryRepository.save(category));
     }
 
     @Override
     @Transactional
-    public void toggleStatus(Integer categoryId) {
+    public CategoryResponse toggleStatus(Integer categoryId) {
         log.info("Inside toggleStatus method of CategoryServiceImpl");
         Category category = categoryUtils.getCategoryById(categoryId);
         Status currentStatus = category.getStatus();
         Status updatedStatus = currentStatus.equals(Status.ACTIVE) ? Status.INACTIVE : Status.ACTIVE;
         category.setStatus(updatedStatus);
-        categoryRepository.save(category);
+        return categoryUtils.mapToDto(categoryRepository.save(category));
     }
 }

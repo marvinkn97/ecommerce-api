@@ -13,7 +13,7 @@ public record CategoryRequest(
         @NotBlank(message = "Category Name must not be blank")
         @Size(min = 3, message = "Category Name must have at least 3 characters")
         @Schema(
-                description = "The name of the category to be created.",
+                description = "The name of the category to be created",
                 example = "Electronics"
         )
         String categoryName) {

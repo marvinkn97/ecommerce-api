@@ -16,6 +16,6 @@ public class CategoryUtils {
     }
 
     public CategoryResponse mapToDto(Category category) {
-        return new CategoryResponse(category.getId(), category.getName(), category.getStatus().name(), category.getCreatedAt());
+        return new CategoryResponse(category.getId(), category.getName(), category.getStatus().name());
     }
 }

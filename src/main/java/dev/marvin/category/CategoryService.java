@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import java.util.Collection;
 
 public interface CategoryService {
-    void add(CategoryRequest categoryRequest);
+    CategoryResponse add(CategoryRequest categoryRequest);
 
     Collection<CategoryResponse> getAll();
 
@@ -13,7 +13,7 @@ public interface CategoryService {
 
     CategoryResponse getOne(Integer categoryId);
 
-    void update(Integer categoryId, CategoryRequest categoryRequest);
+    CategoryResponse update(Integer categoryId, CategoryRequest categoryRequest);
 
-    void toggleStatus(Integer categoryId);
+    CategoryResponse toggleStatus(Integer categoryId);
 }
