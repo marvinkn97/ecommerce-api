@@ -4,7 +4,7 @@ import dev.marvin.auth.PasswordChangeRequest;
 import dev.marvin.auth.PasswordCreationRequest;
 import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.exception.RequestValidationException;
-import dev.marvin.shared.MessageConstants;
+import dev.marvin.constants.MessageConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;

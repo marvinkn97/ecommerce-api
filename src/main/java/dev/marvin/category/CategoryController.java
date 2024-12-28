@@ -1,6 +1,6 @@
 package dev.marvin.category;
 
-import dev.marvin.shared.MessageConstants;
+import dev.marvin.constants.MessageConstants;
 import dev.marvin.shared.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -56,7 +56,7 @@ public class CategoryController {
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), categoryService.getOne(categoryId)));
     }
 
-    @PutMapping("/{categoryId}")
+    @PatchMapping("/{categoryId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update a specific category", description = "Update a specific category. Requires ADMIN role.", method = "PUT")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Category updated successfully"), @ApiResponse(responseCode = "400", description = "Invalid request data provided"), @ApiResponse(responseCode = "404", description = "Category not found for the provided ID"), @ApiResponse(responseCode = "403", description = "User does not have permission to update this category"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
@@ -66,7 +66,7 @@ public class CategoryController {
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), MessageConstants.CATEGORY_UPDATED));
     }
 
-    @PutMapping("{categoryId}/toggle-status")
+    @PatchMapping("{categoryId}/toggle-status")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Toggle Category Status for specific category", description = "Activate or deactivate an existing category. Requires ADMIN role.", method = "PUT")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Category status updated successfully"), @ApiResponse(responseCode = "404", description = "Category not found for the provided ID"), @ApiResponse(responseCode = "403", description = "User does not have permission to modify this category"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})

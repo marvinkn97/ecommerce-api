@@ -16,5 +16,4 @@ public interface CategoryService {
     void update(Integer categoryId, CategoryRequest categoryRequest);
 
     void toggleStatus(Integer categoryId);
-
 }

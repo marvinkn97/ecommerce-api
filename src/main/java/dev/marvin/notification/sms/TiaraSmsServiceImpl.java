@@ -1,6 +1,6 @@
 package dev.marvin.notification.sms;
 
-import dev.marvin.shared.MessageConstants;
+import dev.marvin.constants.MessageConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

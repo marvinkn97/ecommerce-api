@@ -36,7 +36,6 @@ class CategoryServiceImplTest {
         CategoryRequest request = new CategoryRequest("Furniture");
         //when
         underTest.add(request);
-
         //then
     }
 

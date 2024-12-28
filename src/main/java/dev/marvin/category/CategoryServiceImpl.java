@@ -3,9 +3,8 @@ package dev.marvin.category;
 import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.exception.RequestValidationException;
 import dev.marvin.exception.ResourceNotFoundException;
-import dev.marvin.shared.Mapper;
-import dev.marvin.shared.MessageConstants;
-import dev.marvin.shared.PaginationConstants;
+import dev.marvin.constants.MessageConstants;
+import dev.marvin.constants.PaginationConstants;
 import dev.marvin.shared.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public Collection<CategoryResponse> getAll() {
         log.info("Inside getAll method of CategoryServiceImpl");
-        return categoryRepository.findAll().stream().map(Mapper::mapToDto).toList();
+        return categoryRepository.findAll().stream().map(categoryUtils::mapToDto).toList();
     }
 
     @Override
@@ -55,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("Inside getAllPaginated method of CategoryServiceImpl");
         Pageable pageable = PageRequest.of(PaginationConstants.PAGE_NUMBER, PaginationConstants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, PaginationConstants.CATEGORY_SORT_COLUMN));
         Page<Category> categoryPage = categoryRepository.getCategories(pageable);
-        List<CategoryResponse> categoryResponseList = categoryPage.getContent().stream().map(Mapper::mapToDto).toList();
+        List<CategoryResponse> categoryResponseList = categoryPage.getContent().stream().map(categoryUtils::mapToDto).toList();
         return new PageImpl<>(categoryResponseList, pageable, categoryPage.getTotalElements());
     }
 
@@ -63,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public CategoryResponse getOne(Integer categoryId) {
         log.info("Inside getOne method of CategoryServiceImpl");
-        return categoryRepository.findById(categoryId).map(Mapper::mapToDto).orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
+        return categoryRepository.findById(categoryId).map(categoryUtils::mapToDto).orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
     }
 
     @Override

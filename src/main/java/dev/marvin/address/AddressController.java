@@ -1,7 +1,7 @@
 package dev.marvin.address;
 
 import dev.marvin.auth.AuthUtils;
-import dev.marvin.shared.MessageConstants;
+import dev.marvin.constants.MessageConstants;
 import dev.marvin.shared.ResponseDto;
 import dev.marvin.user.UserEntity;
 import io.swagger.v3.oas.annotations.Operation;

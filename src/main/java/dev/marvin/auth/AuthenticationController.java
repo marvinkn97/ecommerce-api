@@ -1,6 +1,6 @@
 package dev.marvin.auth;
 
-import dev.marvin.shared.MessageConstants;
+import dev.marvin.constants.MessageConstants;
 import dev.marvin.shared.ResponseDto;
 import dev.marvin.user.UserProfileRequest;
 import dev.marvin.user.UserService;

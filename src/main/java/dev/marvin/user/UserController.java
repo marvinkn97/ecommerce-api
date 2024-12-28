@@ -1,7 +1,7 @@
 package dev.marvin.user;
 
 import dev.marvin.auth.PasswordChangeRequest;
-import dev.marvin.shared.MessageConstants;
+import dev.marvin.constants.MessageConstants;
 import dev.marvin.shared.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

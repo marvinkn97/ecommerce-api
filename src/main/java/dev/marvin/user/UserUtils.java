@@ -1,7 +1,7 @@
 package dev.marvin.user;
 
 import dev.marvin.exception.ResourceNotFoundException;
-import dev.marvin.shared.MessageConstants;
+import dev.marvin.constants.MessageConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

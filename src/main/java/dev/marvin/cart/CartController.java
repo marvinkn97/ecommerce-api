@@ -1,6 +1,6 @@
 package dev.marvin.cart;
 
-import dev.marvin.shared.MessageConstants;
+import dev.marvin.constants.MessageConstants;
 import dev.marvin.shared.ResponseDto;
 import dev.marvin.user.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
