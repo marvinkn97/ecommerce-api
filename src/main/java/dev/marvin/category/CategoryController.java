@@ -41,7 +41,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<Object>> getAll() {
         log.info("Inside getAll method of CategoryController");
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), categoryService.getAll()));
+        return ResponseEntity.ok(new ResponseDto<>(null, categoryService.getAll()));
     }
 
     @GetMapping("/paginated")
@@ -51,7 +51,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<Object>> getAllPaginated() {
         log.info("Inside getAllPaginated method of CategoryController");
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), categoryService.getAllPaginated()));
+        return ResponseEntity.ok(new ResponseDto<>(null, categoryService.getAllPaginated()));
     }
 
     @GetMapping("/{categoryId}")
@@ -61,7 +61,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "404", description = "Category not found for the provided ID"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<Object>> getOne(@PathVariable("categoryId") Integer categoryId) {
         log.info("Inside getOne method of CategoryController");
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), categoryService.getOne(categoryId)));
+        return ResponseEntity.ok(new ResponseDto<>(null, categoryService.getOne(categoryId)));
     }
 
     @PatchMapping("/{categoryId}")

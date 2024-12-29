@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import java.util.Collection;
 
 public interface ProductService {
-    void add(ProductRequest productRequest);
+    ProductResponse add(ProductRequest productRequest);
 
     Collection<ProductResponse> getAll();
 
@@ -15,7 +15,7 @@ public interface ProductService {
 
     ProductResponse getOne(Integer productId);
 
-    void update(Integer productId, ProductUpdateRequest updateRequest);
+    ProductResponse update(Integer productId, ProductUpdateRequest updateRequest);
 
-    void toggleStatus(Integer productId);
+    ProductResponse toggleStatus(Integer productId);
 }

@@ -35,53 +35,67 @@ public class AuthenticationController {
 
     @PostMapping("/verify-user")
     @Operation(summary = "Verify user", description = "Checks if a user is registered by their mobile number. If registered, prompts login; otherwise, sends an OTP for registration.", method = "POST")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Successful response indicating next steps"), @ApiResponse(responseCode = "400", description = "Invalid mobile number or request format"), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successful response indicating next steps"),
+            @ApiResponse(responseCode = "400", description = "Invalid mobile number or request format"),
+            @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<Object>> verifyUser(@Valid @RequestBody PreAuthRequest preAuthRequest) {
         log.info("Inside verifyUser method of AuthenticationController");
         if (Boolean.TRUE.equals(userService.isUserRegistered(preAuthRequest.mobile()))) {
-            return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), MessageConstants.PROCEED_TO_LOGIN));
+            return ResponseEntity.ok(new ResponseDto<>(MessageConstants.PROCEED_TO_LOGIN, null));
         } else {
             otpUtils.generateAndSendOtp(preAuthRequest);
-            return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), MessageConstants.OTP_SENT));
+            return ResponseEntity.ok(new ResponseDto<>(MessageConstants.OTP_SENT, null));
         }
     }
 
     @PostMapping("/verify-otp")
     @Operation(summary = "Verify OTP", description = "Verifies the OTP sent to the user's mobile number for authentication purposes.", method = "POST")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "OTP verified successfully. Proceed to the password creation screen."), @ApiResponse(responseCode = "400", description = "Invalid OTP format or mobile number."), @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OTP verified successfully. Proceed to the password creation screen."),
+            @ApiResponse(responseCode = "400", description = "Invalid OTP format or mobile number."),
+            @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<Object>> verifyOtp(@Valid @RequestBody OtpVerificationRequest otpVerificationRequest) {
         log.info("Inside verifyOtp method of AuthenticationController");
         otpUtils.verifyOtp(otpVerificationRequest);
         userService.registerMobile(otpVerificationRequest.mobile());
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), MessageConstants.PROCEED_TO_PASSWORD_CREATION));
+        return ResponseEntity.ok(new ResponseDto<>(MessageConstants.PROCEED_TO_PASSWORD_CREATION, null));
     }
 
     @PostMapping("/create-password")
     @Operation(summary = "Create Password", description = "Creates a secure password for the user. Password must be at least 8 characters long.", method = "POST")
-    @ApiResponses({@ApiResponse(responseCode = "201", description = "Password created successfully"), @ApiResponse(responseCode = "400", description = "Invalid password format or request data."), @ApiResponse(responseCode = "500", description = "Internal server error.")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Password created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid password format or request data."),
+            @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<String>> createPassword(@Valid @RequestBody PasswordCreationRequest passwordCreationRequest) {
         log.info("Inside createPassword method of AuthenticationController");
         userService.setPasswordForUser(passwordCreationRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), MessageConstants.PASSWORD_CREATED));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto<>(MessageConstants.PASSWORD_CREATED, null));
     }
 
     @PostMapping("/complete-profile")
     @Operation(summary = "Complete Profile", description = "Completes the user profile by setting up required user details.", method = "POST")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "User profile completed successfully."), @ApiResponse(responseCode = "400", description = "Invalid request data."), @ApiResponse(responseCode = "500", description = "Internal server error.")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User profile completed successfully."),
+            @ApiResponse(responseCode = "400", description = "Invalid request data."),
+            @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")})
     public ResponseEntity<ResponseDto<String>> completeProfile(@Valid @RequestBody UserProfileRequest userProfileRequest) {
         log.info("Inside completeProfile method of AuthenticationController");
         userService.completeUserProfile(userProfileRequest);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.CREATED.getReasonPhrase(), MessageConstants.ACCOUNT_CREATED));
+        return ResponseEntity.ok(new ResponseDto<>(MessageConstants.ACCOUNT_CREATED, null));
     }
 
 
     @PostMapping("/login")
     @Operation(summary = "User login", description = "Verifies user credentials and generates a JWT token for successful login.", method = "POST")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "User successfully authenticated and JWT token generated"), @ApiResponse(responseCode = "401", description = "Invalid credentials provided")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User successfully authenticated and JWT token generated"),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials provided")})
     public ResponseEntity<ResponseDto<Object>> authenticate(@Valid @RequestBody AuthenticationRequest authenticationRequest) {
         log.info("Inside authenticate method of AuthenticationController");
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.mobile(), authenticationRequest.password()));
         String token = jwtUtils.generateToken(authentication);
-        return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.AUTHORIZATION, token).body(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), new AuthenticationResponse(token)));
+        return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.AUTHORIZATION, token).body(new ResponseDto<>(null, new AuthenticationResponse(token)));
     }
 }

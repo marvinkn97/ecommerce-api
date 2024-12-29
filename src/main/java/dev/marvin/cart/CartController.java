@@ -1,7 +1,9 @@
 package dev.marvin.cart;
 
+import dev.marvin.auth.AuthUtils;
 import dev.marvin.constants.MessageConstants;
 import dev.marvin.shared.ResponseDto;
+import dev.marvin.user.UserEntity;
 import dev.marvin.user.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,6 +27,7 @@ import java.util.Objects;
 @Tag(name = "Cart Resource", description = "CRUD operations for Cart Management")
 public class CartController {
     private final CartService cartService;
+    private final AuthUtils authUtils;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')") //change later
@@ -37,9 +40,8 @@ public class CartController {
     @ApiResponse(responseCode = "500", description = "Unexpected error occurred when processing request")
     public ResponseEntity<ResponseDto<String>> add(@RequestParam("productId") Integer productId) {
         log.info("Inside add method of CartController");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        cartService.addProductToCart(Objects.requireNonNull(productId), userPrincipal.userEntity());
+        UserEntity user = authUtils.getAuthenticatedUserEntity();
+        cartService.addProductToCart(Objects.requireNonNull(productId), user);
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.getReasonPhrase(), MessageConstants.ADD_PRODUCT_TO_CART));
     }
 

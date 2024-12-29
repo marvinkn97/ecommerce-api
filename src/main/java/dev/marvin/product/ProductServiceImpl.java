@@ -2,11 +2,11 @@ package dev.marvin.product;
 
 import dev.marvin.category.Category;
 import dev.marvin.category.CategoryUtils;
+import dev.marvin.constants.MessageConstants;
+import dev.marvin.constants.PaginationConstants;
 import dev.marvin.exception.DuplicateResourceException;
 import dev.marvin.exception.RequestValidationException;
 import dev.marvin.shared.Mapper;
-import dev.marvin.constants.MessageConstants;
-import dev.marvin.constants.PaginationConstants;
 import dev.marvin.shared.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductUtils productUtils;
 
     @Override
-    public void add(ProductRequest productRequest) {
+    public ProductResponse add(ProductRequest productRequest) {
         log.info("Inside add method of ProductServiceImpl");
         try {
             Category category = categoryUtils.getCategoryById(productRequest.categoryId());
@@ -40,12 +40,13 @@ public class ProductServiceImpl implements ProductService {
                     .quantity(productRequest.productQuantity())
                     .category(category)
                     .build();
-            productRepository.save(product);
+            return Mapper.mapToDto(productRepository.save(product));
         } catch (DataIntegrityViolationException ex) {
             log.error("DataIntegrityViolationException {}", ex.getMessage(), ex);
-            if (ex.getMessage().contains("product_name")) {
+            if (ex.getMessage().contains("name")) {
                 throw new DuplicateResourceException(MessageConstants.DUPLICATE_PRODUCT_NAME);
             }
+            throw new RequestValidationException(MessageConstants.UNEXPECTED_ERROR);
         }
     }
 
@@ -84,10 +85,14 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public void update(Integer productId, ProductUpdateRequest productUpdateRequest) {
+    public ProductResponse update(Integer productId, ProductUpdateRequest productUpdateRequest) {
         log.info("Inside update method of ProductServiceImpl");
         Product product = productUtils.getProductById(productId);
         boolean changes = false;
+
+        if (product.getStatus().equals(Status.INACTIVE)) {
+            throw new RequestValidationException("Activate product status to perform modifications");
+        }
 
         String updatedName = productUpdateRequest.productName();
         if (StringUtils.hasText(updatedName) && !updatedName.equals(product.getName())) {
@@ -129,19 +134,17 @@ public class ProductServiceImpl implements ProductService {
             throw new RequestValidationException("No changes detected in the request");
         }
 
-        productRepository.save(product);
-        log.info("Product with ID [{}] successfully updated", productId);
+        return Mapper.mapToDto(productRepository.save(product));
     }
 
     @Override
-    public void toggleStatus(Integer productId) {
+    public ProductResponse toggleStatus(Integer productId) {
         log.info("Inside toggleStatus method of ProductServiceImpl");
         Product product = productUtils.getProductById(productId);
         Status currentStatus = product.getStatus();
         Status updatedStatus = currentStatus.equals(Status.ACTIVE) ? Status.INACTIVE : Status.ACTIVE;
         product.setStatus(updatedStatus);
-        productRepository.save(product);
-        log.info("Product with ID [{}] successfully updated", productId);
+        return Mapper.mapToDto(productRepository.save(product));
     }
 
 }

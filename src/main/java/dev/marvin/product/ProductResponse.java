@@ -2,6 +2,12 @@ package dev.marvin.product;
 
 import java.math.BigDecimal;
 
-public record ProductResponse(Integer id, String name, BigDecimal price, BigDecimal specialPrice, Integer availableQty,
-                              String description, String status) {
+public record ProductResponse(
+        Integer productId,
+        String productName,
+        BigDecimal productPrice,
+        BigDecimal specialPrice,
+        Integer availableQty,
+        String productDescription,
+        String status) {
 }

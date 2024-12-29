@@ -47,6 +47,7 @@ public class Product {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, orphanRemoval = true)
     private Collection<Image> images = new HashSet<>();
 

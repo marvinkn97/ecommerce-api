@@ -15,7 +15,4 @@ public class CategoryUtils {
                 .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
     }
 
-    public CategoryResponse mapToDto(Category category) {
-        return new CategoryResponse(category.getId(), category.getName(), category.getStatus().name());
-    }
 }

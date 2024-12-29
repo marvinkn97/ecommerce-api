@@ -6,6 +6,8 @@ import dev.marvin.cart.Cart;
 import dev.marvin.cart.CartItem;
 import dev.marvin.cart.CartItemResponse;
 import dev.marvin.cart.CartResponse;
+import dev.marvin.category.Category;
+import dev.marvin.category.CategoryResponse;
 import dev.marvin.order.Order;
 import dev.marvin.order.OrderItem;
 import dev.marvin.order.OrderItemResponse;
@@ -17,14 +19,23 @@ import dev.marvin.user.UserEntity;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Mapper {
     private Mapper() {
     }
 
+    public static CategoryResponse mapToDto(Category category) {
+        return new CategoryResponse(category.getId(), category.getName(), category.getStatus().name());
+    }
+
     public static ProductResponse mapToDto(Product product) {
-        BigDecimal specialPrice = product.getPrice().subtract(product.getDiscountPrice());
+        BigDecimal specialPrice = null;
+        BigDecimal discountPrice = Objects.requireNonNull(product.getDiscountPrice());
+        if(discountPrice.doubleValue() > 0){
+            specialPrice = product.getPrice().subtract(product.getDiscountPrice());
+        }
         return new ProductResponse(product.getId(), product.getName(), product.getPrice(), specialPrice, product.getQuantity(), product.getDescription(), product.getStatus().name());
     }
 

@@ -21,7 +21,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void addProductToCart(Integer productId, UserEntity userEntity) {
+    public CartResponse addProductToCart(Integer productId, UserEntity userEntity) {
         log.info("Inside addProductToCart method of CartServiceImpl");
         Integer userId = userEntity.getId();
 
@@ -34,9 +34,10 @@ public class CartServiceImpl implements CartService {
 
         // Fetch user's cart or create a new one
         Cart cart = cartRepository.findByUserId(userId).orElseGet(Cart::new);
+        log.info("cart: {}", cart);
         cart.setUserEntity(userEntity);
 
-        // Check if product already in the cart
+        // Check if product exists in cart
         cart.getCartItems()
                 .stream()
                 .filter(item -> item.getProduct().getId().equals(product.getId()))
@@ -53,8 +54,7 @@ public class CartServiceImpl implements CartService {
                             cart.getCartItems().add(newCartItem);
                         }
                 );
-        cartRepository.save(cart);
-        log.info("Product added to cart successfully");
+        return Mapper.mapToDto(cartRepository.save(cart));
     }
 
     @Override
